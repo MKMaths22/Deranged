@@ -3,6 +3,7 @@ class Derangements
   MAX_TRIES = 5
   
   attr_reader :max_input, :n, :output
+  attr_accessor :check_position
   
   def initialize(max_input = 11)
     puts "Welcome."
@@ -10,6 +11,7 @@ class Derangements
     @n = get_valid_input
     @output = []
     calculate_derangements if @n
+    @check_position = n - 1
   end
 
   def get_valid_input
@@ -43,8 +45,9 @@ class Derangements
   def calculate_derangements
     current_permutation = n.times.map { |num| num + 1 }
     # the first permutation is [1, 2, 3 ... n]
-    while current_permutation
+    while current_permutation do
       @output.push(current_permutation) if is_derangement?(current_permutation)
+      # puts "@output is now #{output}"
       current_permutation = next_permutation(current_permutation)
       # if there is no next permutation, the next_permutation method returns nil, stopping the while loop
     end
@@ -53,31 +56,38 @@ class Derangements
   end
 
   def next_permutation(permutation)
-    puts "We want the next permutation after #{permutation}"
+    # puts "We want the next permutation after #{permutation}"
     return nil if n == 1
     available_values = Array.new(n, false)
-    check_position = n - 2
-    puts "check_position has value #{check_position}"
-    puts "Available values starts as #{available_values}"
-      while check_position > 0 && permutation[check_position] > permutation[check_position + 1]
-        available_values[permutation[check_position + 1] - 1] = true
-        check_position -= 1
-        puts "check_position now has value #{check_position}"
+    @check_position = n - 2
+    # puts "check_position has value #{check_position}"
+    # puts "Available values starts as #{available_values}"
+    available_values[permutation[n - 1] - 1] = true
+      while check_position > 0 && permutation[check_position] > permutation[check_position + 1] do
+        available_values[permutation[check_position] - 1] = true
+        @check_position -= 1
+        # puts "check_position now has value #{check_position}"
       end
       available_values[permutation[check_position] - 1] = true
+    # puts "after setting the available values, they are #{available_values}"
     return nil if check_position == 0 && permutation[check_position] == n
     # check_position is now the first place in the permutation, counting backwards from the end, that we can increase the value of for the next permutation
     # the available_values PLUS ONE (indexed from zero to n - 1) are the remaining numbers we can place in the permutation from that place onwards without duplicating the previous ones
-    next_perm = permutation[0..(check_position - 1)]
+    next_perm = check_position.zero? ? [] : permutation[0..(check_position - 1)]
+    # puts "initial value of next_perm is #{next_perm}"
     # check this line works for check_position = zero
-    can_we_use = permutation[check_position] + 1
-    can_we_use += 1 until available_values[can_we_use]
+    can_we_use = permutation[check_position]
+    until available_values[can_we_use] == true do
+      can_we_use += 1
+    end
     next_perm.push(can_we_use + 1)
+    # puts "next_perm is now equal to #{next_perm}"
     available_values[can_we_use] = false
     # now we use the remaining available values in increasing order
     available_values.each_with_index do | boolean, index |
       next_perm.push(index + 1) if boolean
     end
+    # puts "next_perm ends up as #{next_perm}"
     return next_perm
   end
 
