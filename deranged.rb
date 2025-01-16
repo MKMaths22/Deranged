@@ -3,15 +3,20 @@ class Derangements
   MAX_TRIES = 5
   
   attr_reader :max_input, :n, :output
-  attr_accessor :check_position
+  attr_accessor :current_permutation, :current_positions
   
   def initialize(max_input = 11)
     puts "Welcome."
     @max_input = max_input
-    @n = get_valid_input
     @output = []
-    calculate_derangements if @n
-    @check_position = n - 1
+    @n = get_valid_input
+      if @n
+        @current_permutation = n.times.map { |num| num + 1 }
+        @current_positions = n.times.map { |num| num + 1 }
+        calculate_derangements
+      end
+    # the first permutation is [1, 2, 3 ... n]
+    # current_positions is written using human-indexing (not computer) to say 1 in is in position 1, 2 is in position 2, e
   end
 
   def get_valid_input
@@ -43,19 +48,75 @@ class Derangements
   end
 
   def calculate_derangements
-    current_permutation = n.times.map { |num| num + 1 }
-    # the first permutation is [1, 2, 3 ... n]
     while current_permutation do
-      @output.push(current_permutation) if is_derangement?(current_permutation)
-      # puts "@output is now #{output}"
-      current_permutation = next_permutation(current_permutation)
-      # if there is no next permutation, the next_permutation method returns nil, stopping the while loop
+      @output.push(@current_permutation.clone) if is_derangement?(@current_permutation)
+      puts "@output is now #{output}"
+      find_next_permutation
+      # if there is no next permutation, @current_permutation becomes nil, stopping the while loop
     end
     create_output_file unless File.exist?("output.txt")
     write_output
   end
 
-  def next_permutation(permutation)
+  def find_next_permutation
+    # puts "starting to find_next_permutation"
+    # puts "current permutation is #{current_permutation} and positions are #{current_positions}"
+    looking_for = 1
+      while looking_for < n && current_positions[looking_for - 1] + looking_for == (n + 1) do
+        looking_for += 1
+        # puts "In the find_next_permutation, looking_for has incremented to #{looking_for}"
+      end
+      if looking_for == n
+        @current_permutation = nil
+        return
+      end
+      # puts "On line 72, looking_for = #{looking_for}"
+    (looking_for - 1).times do |num|
+      @current_permutation.pop
+      # puts "After pop, current_permutation = #{@current_permutation}"
+      @current_positions[num] = num + 1
+      # puts "Then current_permutation is #{@current_permutation}"
+    end
+    putting_it_up_front = looking_for - 1
+    # puts "putting_it_up_front = #{putting_it_up_front}"
+      while putting_it_up_front > 0 do
+        # puts "THIS SHOULD NOT SHOW"
+        @current_permutation = @current_permutation.unshift(putting_it_up_front)
+        putting_it_up_front -= 1
+      end
+      changing_positions = looking_for
+      # puts "Before the new loop, changing_positions = #{changing_positions}"
+      while changing_positions <= n do
+        @current_positions[changing_positions - 1] += looking_for - 1
+        changing_positions += 1
+        # puts "In the loop, changing positions has incremented to #{changing_positions}"
+      end
+    # puts "Before shift_one_step, looking_for = #{looking_for} with current_permutation = #{@current_permutation} and current positions #{@current_positions}"
+    shift_one_step(looking_for)
+    puts "After shift_one_step we have current_permutation = #{@current_permutation} and current positions #{@current_positions}"
+  end
+
+  def shift_one_step(number)
+    next_number_along_in_permutation = current_permutation[current_positions[number - 1]]
+    # puts "After setting next_number..., current_positions = #{@current_positions}"
+    # puts "next_number_along... = #{next_number_along_in_permutation}"
+    @current_permutation[current_positions[number - 1] - 1] = next_number_along_in_permutation
+    # puts "current_permutation = #{@current_permutation}"
+    # puts "After putting next_number_along... into current_permutation, current_positions = #{@current_positions}"
+    @current_permutation[current_positions[number - 1]] = number
+    # puts "current_positions = #{@current_positions}"
+    # puts "number = #{number}"
+    # puts "current_positions[number - 1] = #{@current_positions[number - 1]}"
+    # puts "current_permutation = #{@current_permutation}"
+    @current_positions[next_number_along_in_permutation - 1] = current_positions[next_number_along_in_permutation - 1] - 1
+    @current_positions[number - 1] = current_positions[number - 1] + 1
+  end
+
+  
+
+
+
+  def next_permutation_old_version(permutation)
     # puts "We want the next permutation after #{permutation}"
     return nil if n == 1
     available_values = Array.new(n, false)
