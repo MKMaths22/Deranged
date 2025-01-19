@@ -11,13 +11,6 @@ class Derangements
     puts "Welcome."
     @max_input = max_input
     @outputter = Outputter.new
-    
-    
-    # MAKE A SEPARATE CLASS FOR HANDLING OUTPUT. HAVE THE OUTPUT ORGANISED SO THE PREVIOUS LINE GETS WRITTEN TO  
-    # THE FILE WITH A COMMA and then the current one becomes the previous one etc. Then when the Outputter is told
-    # that there are no more derangements, it puts a full stop on the last line and writes it to the file.
-    
-    
     @n = get_valid_input
       if @n
         @current_permutation = n.times.map { |num| num + 1 }
@@ -58,10 +51,11 @@ class Derangements
 
   def calculate_derangements
     while current_permutation do
-      @outputter.add_perm_to_output(@current_permutation) if is_derangement?(@current_permutation)
+      @outputter.add_perm_to_output(current_permutation) if is_derangement?(current_permutation)
       find_next_permutation
       # if there is no next permutation, @current_permutation becomes nil, stopping the while loop
     end
+    @outputter.finish_output
   end
 
   def find_next_permutation
@@ -69,6 +63,10 @@ class Derangements
       while looking_for < n && current_positions[looking_for - 1] + looking_for == (n + 1) do
         looking_for += 1
       end
+      # looking_for is the highest number k such that the permutation finishes with k - 1, k - 2, k - 3 .... 1. So if
+      # looking_for is at least n, we are at the final permutation n, n - 1, n - 2 .... 1.
+      # The next permutation will be obtained by moving looking_for one place to the right and putting all lower values
+      # at the start of the permutation in increasing order
       if looking_for == n
         @current_permutation = nil
         return
@@ -76,26 +74,32 @@ class Derangements
     (looking_for - 1).times do |num|
       @current_permutation.pop
       @current_positions[num] = num + 1
+      # we remove the first looking_for - 1 values from the end and prepare current_positions for adding them at the start
     end
     putting_it_up_front = looking_for - 1
       while putting_it_up_front > 0 do
         @current_permutation = @current_permutation.unshift(putting_it_up_front)
+        # now the current_permutation has the looking_for - 1 values added to the start in increasing order
         putting_it_up_front -= 1
       end
       changing_positions = looking_for
       while changing_positions <= n do
         @current_positions[changing_positions - 1] += looking_for - 1
+        # the current_positions from looking_for upwards all have to increase because we inserted looking_for - 1 values to their left
         changing_positions += 1
       end
     shift_one_step(looking_for)
+    # now we shift the value looking_for one place to the right in the permutation
   end
 
   def shift_one_step(number)
     next_number_along_in_permutation = current_permutation[current_positions[number - 1]]
+    # next_number_along... is the adjacent value to the right of looking_for
     @current_permutation[current_positions[number - 1] - 1] = next_number_along_in_permutation
     @current_permutation[current_positions[number - 1]] = number
     @current_positions[next_number_along_in_permutation - 1] = current_positions[next_number_along_in_permutation - 1] - 1
     @current_positions[number - 1] = current_positions[number - 1] + 1
+    # the values looking_for and next_number_along have been interchanged, affecting current_permutation and current_positions accordingly.
   end
 
   def next_permutation_old_version(permutation)
