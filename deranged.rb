@@ -1,4 +1,6 @@
 class Derangements
+
+  require_relative './outputter'
   
   MAX_TRIES = 5
   
@@ -8,32 +10,22 @@ class Derangements
   def initialize(max_input = 11)
     puts "Welcome."
     @max_input = max_input
-    @output_per_line = 5
+    @outputter = Outputter.new
+    
     
     # MAKE A SEPARATE CLASS FOR HANDLING OUTPUT. HAVE THE OUTPUT ORGANISED SO THE PREVIOUS LINE GETS WRITTEN TO  
     # THE FILE WITH A COMMA and then the current one becomes the previous one etc. Then when the Outputter is told
     # that there are no more derangements, it puts a full stop on the last line and writes it to the file.
     
-    @current_output_line = ''
-    @previous_output_line = ''
+    
     @n = get_valid_input
       if @n
         @current_permutation = n.times.map { |num| num + 1 }
         @current_positions = n.times.map { |num| num + 1 }
-        @output_file = File.exist?("output.txt") ? wipe_output : create_output_file
         calculate_derangements
       end
     # the first permutation is [1, 2, 3 ... n]
     # current_positions is written using human-indexing (not computer) to say 1 in is in position 1, 2 is in position 2, e
-  end
-
-  def wipe_output
-    open("output.txt", File::TRUNC) {}
-    File.open("output.txt", "w")
-  end
-
-  def create_output_file
-    File.new "output.txt", "w"
   end
 
   def get_valid_input
@@ -66,14 +58,10 @@ class Derangements
 
   def calculate_derangements
     while current_permutation do
-      add_perm_to_output if is_derangement?(@current_permutation)
+      @outputter.add_perm_to_output(@current_permutation) if is_derangement?(@current_permutation)
       find_next_permutation
       # if there is no next permutation, @current_permutation becomes nil, stopping the while loop
     end
-  end
-
-  def add_perm_to_output
-    @output_file.write(@current_permutation.to_s.concat(', '))
   end
 
   def find_next_permutation
