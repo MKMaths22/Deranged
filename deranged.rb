@@ -15,8 +15,10 @@ class Derangements
       if @n
         @current_permutation = n.times.map { |num| num + 1 }
         @current_positions = n.times.map { |num| num + 1 }
+        @start_time = Time.now
         calculate_derangements
       end
+    puts "Time taken = #{Time.now - @start_time} seconds."
     # the first permutation is [1, 2, 3 ... n]
     # current_positions is written using human-indexing (not computer) to say 1 in is in position 1, 2 is in position 2, etc..
   end
