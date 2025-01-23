@@ -1,4 +1,4 @@
-class Calculator
+class FromPermutations
   
   attr_reader :n
   attr_accessor :current_permutation, :current_positions
