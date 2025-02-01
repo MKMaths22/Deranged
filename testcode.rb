@@ -21,5 +21,10 @@ def generate_initial_derangement(current_loop_lengths, n)
     current_derangement
 end
 
-puts generate_initial_derangement([3,4,2], 9)
+# puts generate_initial_derangement([3,4,2], 9)
+
+current_named_loops = [6,5,4,3,2,1]
+puts current_named_loops[4..-1]
+puts "/n"
+puts current_named_loops
 
