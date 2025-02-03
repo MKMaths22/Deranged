@@ -17,7 +17,7 @@ class ConstructLoops
     @current_named_loops = n.times.map { |num| num + 1 }
     @current_derangement = []
     @change_from_index = current_variables.size - 1
-    @remaining_named_loop_values = []
+    @remaining_named_loop_values = n.times.map { |num| num + 1 }
     # current_parameter_limits starts as [1, n - 1, n - 2 .... 1]
   end
 
@@ -28,6 +28,7 @@ class ConstructLoops
       set_parameter_limits_and_variables_etc_for_new_loop_lengths
       make_named_loops
     end
+    @outputter.finish_output
   end
 
   def write_loop_lengths
@@ -90,6 +91,7 @@ class ConstructLoops
   # variable index goes from 0 to current_variables.size - 1, telling us which variable we are dealing from.
   # As this method recursively calls other versions of itself, it causes the variables to reach all possible combinations,
   # and therefore the parameters too (because the other parameters do not change anyway.)
+    puts "At line 93, variable index = #{variable_index}. Current variables are #{current_variables}."
     parameter_number = current_variables[variable_index]
     number_of_values_taken = current_parameter_limits[parameter_number]
     number_of_values_taken.times do |cycle|
@@ -112,6 +114,7 @@ class ConstructLoops
   def modify_named_loops(from = change_from_index)
     index = from
     temporary_remaining_values = remaining_named_loop_values.clone
+    puts "modify_named_loops is running and temporary_remaining_values = #{temporary_remaining_values}."
     # the remaining values from the set (1...n), disregarding those values used before index = from in the current_named_loops
     # temp... and remaining... are sorted in increasing order, so we can take the correct values based on the parameter_values
     while index < n do
@@ -124,6 +127,7 @@ class ConstructLoops
   end
 
   def modify_derangement(from = change_from_index)
+    puts "modify_derangement is running. Current_named_loops = #{current_named_loops}."
     index = from
     while index < n do
       @current_derangement[current_named_loops[index] - 1] = current_named_loops[current_loop_vector[index]]
@@ -135,17 +139,19 @@ class ConstructLoops
   
   def update_parameter_limits
     reset_parameter_limits
+    # puts "update_parameter_limits is running and they have reset. They now equal #{current_parameter_limits}."
     index_to_change = 0
     current_loop_lengths.each do |length|
       index_to_change += length
-      @current_parameter_limits[index_to_change] = 1
+      @current_parameter_limits[index_to_change] = 1 unless index_to_change == n
     end
   end
 
   def update_variables
+    # puts "The update_variables method is running, with current_parameter_limits = #{current_parameter_limits}."
     current_variables = []
     current_parameter_limits.each_with_index do | limit, parameter |
-      current_variables.push(parameter) if limit >= 2
+    @current_variables = current_variables.push(parameter) if limit >= 2
     end
   end
   
@@ -166,7 +172,9 @@ class ConstructLoops
   end
 
   def reset_parameter_limits
+    puts "Before resetting, current_parameter_limits = #{current_parameter_limits}."
     @current_parameter_limits = ((n - 1).times.map { |num| (n - 1) - num }).unshift(1)
+    puts "After resetting, the limits are #{current_parameter_limits}."
   end
 
   def reset_parameter_values
@@ -182,7 +190,7 @@ class ConstructLoops
   end
     
   def reset_remaining_named_loop_values
-    @reset_remaining_named_loop_values = []
+    @remaining_named_loop_values = n.times.map { |num| num + 1 }
   end
 
   # def generate_initial_derangement
