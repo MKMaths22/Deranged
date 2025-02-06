@@ -24,12 +24,12 @@ class ConstructLoops
 
   def calculate_derangements
     write_loop_lengths
-    puts "@loop_lengths = #{loop_lengths}."
+    # puts "@loop_lengths = #{loop_lengths}."
     loop_lengths[n].each do |array|
       update_current_loop_lengths(array)
       # puts "At line 29, current_loop_lengths = #{current_loop_lengths}."
       set_parameter_limits_and_variables_etc_for_new_loop_lengths
-      puts "For loop_lengths of #{current_loop_lengths}, the memo_hash starts off as #{memo_hash}."
+      # puts "For loop_lengths of #{current_loop_lengths}, the memo_hash starts off as #{memo_hash}."
       make_named_loops
     end
     @outputter.finish_output
@@ -101,7 +101,7 @@ class ConstructLoops
     number_of_values_taken = current_parameter_limits[parameter_number]
     number_of_values_taken.times do |cycle|
       if variable_index + 1 == current_variables.size
-        puts "At line 101, the current_loop_lengths are #{current_loop_lengths}. The variables are #{current_variables} and the parameters have values #{current_parameter_values}."
+        # puts "At line 101, the current_loop_lengths are #{current_loop_lengths}. The variables are #{current_variables} and the parameters have values #{current_parameter_values}."
         modify_named_loops
         modify_derangement
         output_derangement 
@@ -111,9 +111,9 @@ class ConstructLoops
         current_parameter_values[parameter_number] = 1 
       else
         current_parameter_values[parameter_number] += 1
-        puts "change_from_index is #{change_from_index} before it is changed."
-        change_from_index = parameter_number
-        puts "change_from_index has changed to #{change_from_index}."
+        # puts "change_from_index is #{change_from_index} before it is changed."
+        @change_from_index = parameter_number
+        # puts "change_from_index has changed to #{change_from_index}."
         remaining_named_loop_values = current_named_loops[parameter_number..-1].clone.sort
         memo_hash[parameter_number] = remaining_named_loop_values.clone if cycle == 0
       end
@@ -124,7 +124,7 @@ class ConstructLoops
     index = from
     remaining_named_loop_values = memo_hash[index].clone
     temporary_remaining_values = remaining_named_loop_values.clone
-    puts "On Line 120, modify_named_loops has from = #{from} and remaining_named_loop_values = #{remaining_named_loop_values}."
+    # puts "On Line 120, modify_named_loops has from = #{from} and remaining_named_loop_values = #{remaining_named_loop_values}."
     # puts "modify_named_loops is running and temporary_remaining_values = #{temporary_remaining_values}."
     # the remaining values from the set (1...n), disregarding those values used before index = from in the current_named_loops
     # temp... and remaining... are sorted in increasing order, so we can take the correct values based on the parameter_values
@@ -138,14 +138,14 @@ class ConstructLoops
   end
 
   def modify_derangement(from = change_from_index)
-    puts "modify_derangement is running. Current_named_loops = #{current_named_loops}. The derangement starts as #{current_derangement}."
-    index = from - 1
+    # puts "modify_derangement is running with from = #{from}. Current_named_loops = #{current_named_loops}. Loop vector is #{current_loop_vector} for loop lengths #{current_loop_lengths}. The derangement starts as #{current_derangement}."
+    index = from.zero? ? 0 : from - 1
     while index < n do
       @current_derangement[current_named_loops[index] - 1] = current_named_loops[current_loop_vector[index]]
-      puts "One change has changed the derangement to #{current_derangement}."
+      # puts "One change with index = #{index} has changed the derangement to #{current_derangement}."
       index += 1
     end
-    puts "At the end of modify_derangement, the derangement is #{current_derangement}. The current_named_loops should not change and are #{current_named_loops}."
+    # puts "At the end of modify_derangement, the derangement is #{current_derangement}. The current_named_loops should not change and are #{current_named_loops}."
   end
 
   private
