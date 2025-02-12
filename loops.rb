@@ -30,7 +30,7 @@ class ConstructLoops
       # puts "At line 29, current_loop_lengths = #{current_loop_lengths}."
       set_parameter_limits_and_variables_etc_for_new_loop_lengths
       # puts "For loop_lengths of #{current_loop_lengths}, the memo_hash starts off as #{memo_hash}."
-      make_named_loops
+      enumerate_this_and_remaining(0)
     end
     @outputter.finish_output
   end
@@ -68,14 +68,11 @@ class ConstructLoops
     modify_derangement(0)
   end
   
-  def make_named_loops
-    # output_derangement
     # NOT SURE WHERE OUTPUTTING THE FIRST DERANGEMENT SHOULD GO, CHECK EXACTLY WHAT enumerate_this_and_remaining does recursively
     # current_loop_lengths is for example [3, 4, 2] from which we will get all derangements of n = 9 in which the element '1' is in a loop of length 3 and the next lowest
     # element not yet chosen is in a loop of length 4 and the remaining elements make a loop of length 2.
     # the parameters are numbered in the computer-indexed way from 0 to n - 1, and correspondingly the variables, which are the parameters with limit at least 2
-    # the VALUES of the parameters/variables are human-indexed, where 1 means lowest-available value etc..
-    update_parameter_values_etc
+    # the VALUES of the parameters/variables are human-indexed, where 1 means lowest-available value etc.
 
 
     # current_parameter_limits is the array telling us how many choices we have for each member of the loops. For example, for [3, 4, 2] we get [1, 8, 7, 1, 5, 4, 3, 1, 1]
@@ -86,11 +83,6 @@ class ConstructLoops
     # recreated in exactly the same way.
 
     # Make sure parameter_limits and parameter_values are RESET AT THE END of their current use
-  end
-
-  def update_parameter_values_etc
-    enumerate_this_and_remaining(0)
-  end
 
   def enumerate_this_and_remaining(variable_index)
   # variable index goes from 0 to current_variables.size - 1, telling us which variable we are dealing from.
