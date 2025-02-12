@@ -30,7 +30,7 @@ class ConstructLoops
       # puts "At line 29, current_loop_lengths = #{current_loop_lengths}."
       set_parameter_limits_and_variables_etc_for_new_loop_lengths
       # puts "For loop_lengths of #{current_loop_lengths}, the memo_hash starts off as #{memo_hash}."
-      enumerate_this_and_remaining(0)
+      lexicographically_enumerate_parameter_values_to_generate_derangements(0)
     end
     @outputter.finish_output
   end
@@ -68,7 +68,6 @@ class ConstructLoops
     modify_derangement(0)
   end
   
-    # NOT SURE WHERE OUTPUTTING THE FIRST DERANGEMENT SHOULD GO, CHECK EXACTLY WHAT enumerate_this_and_remaining does recursively
     # current_loop_lengths is for example [3, 4, 2] from which we will get all derangements of n = 9 in which the element '1' is in a loop of length 3 and the next lowest
     # element not yet chosen is in a loop of length 4 and the remaining elements make a loop of length 2.
     # the parameters are numbered in the computer-indexed way from 0 to n - 1, and correspondingly the variables, which are the parameters with limit at least 2
@@ -84,7 +83,7 @@ class ConstructLoops
 
     # Make sure parameter_limits and parameter_values are RESET AT THE END of their current use
 
-  def enumerate_this_and_remaining(variable_index)
+  def lexicographically_enumerate_parameter_values_to_generate_derangements(variable_index)
   # variable index goes from 0 to current_variables.size - 1, telling us which variable we are dealing from.
   # As this method recursively calls other versions of itself, it causes the variables to reach all possible combinations,
   # and therefore the parameters too (because the other parameters do not change anyway.)
@@ -97,7 +96,7 @@ class ConstructLoops
         modify_named_loops
         modify_derangement
         output_derangement 
-      else enumerate_this_and_remaining(variable_index + 1)
+      else lexicographically_enumerate_parameter_values_to_generate_derangements(variable_index + 1)
       end
       if cycle + 1 == number_of_values_taken 
         current_parameter_values[parameter_number] = 1 
