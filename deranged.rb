@@ -8,12 +8,12 @@ class Derangements
   
   attr_reader :max_input, :output
   
-  def initialize(max_input = 11)
+  def initialize(max_input = 11, number = nil, method = nil)
     puts "Welcome."
     @max_input = max_input
-    number = get_valid_number
+    number = get_valid_number unless number
       if number
-        method = get_method
+        method = get_method unless method
         @calculator = 
           method == 'permutations' ? FromPermutations.new(number) : ConstructLoops.new(number)
           @start_time = Time.now
