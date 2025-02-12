@@ -6,7 +6,7 @@ class Derangements
   
   MAX_TRIES = 5
   
-  attr_reader :max_input, :output
+  attr_reader :max_input, :output, :calculator
   
   def initialize(max_input = 11, number = nil, method = nil)
     puts "Welcome."
@@ -73,4 +73,4 @@ class Derangements
   end
 end 
 
-Derangements.new
+# Derangements.new
