@@ -1,7 +1,7 @@
 class Outputter
   
   attr_accessor :output_line, :output_line_length, :output_file
-  attr_reader :output_per_line, :total_outputs, :testing
+  attr_reader :output_per_line, :total_outputs, :testing, :aggregated_output
   
   def initialize(testing = false, output_per_line = 5)
     @testing = testing
@@ -10,6 +10,7 @@ class Outputter
     @output_line_length = 0
     @output_file = File.exist?("output.txt") ? wipe_output : create_output_file
     @total_outputs = 0 if testing
+    @aggregated_output = [] if testing
   end
 
   def wipe_output
@@ -35,29 +36,35 @@ class Outputter
   end
 
   def add_perm_to_output(array)
+    increment_total_outputs(array.clone) if testing
     if output_line_full?
       output_current_line
       clear_current_line
     end
     @output_line = output_line.concat(array.to_s.concat(', '))
     increment_line_length
-    increment_total_outputs if testing
   end
 
   def increment_line_length
     @output_line_length += 1
   end
 
-  def increment_total_outputs
+  def increment_total_outputs(array)
     @total_outputs += 1
+    @aggregated_output.push(array)
   end
 
   def finish_output
     put_stop_on_line
     output_current_line
+    sort_aggregated_output if testing
   end
 
   def put_stop_on_line
     @output_line = output_line.delete_suffix(', ').concat('.')
+  end
+
+  def sort_aggregated_output
+    @aggregated_output = @aggregated_output.clone.sort
   end
 end
