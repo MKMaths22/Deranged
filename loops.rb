@@ -1,11 +1,14 @@
 class ConstructLoops
 
-  attr_reader :n, :parameter_limits, :loop_lengths_collection, :loop_lengths, :loop_vector, :outputter
+  attr_reader :n, :parameter_limits, :loop_lengths_collection, :loop_lengths, :loop_vector, :outputter, :testing
   attr_accessor :parameter_values, :named_loops, :derangement, :variables, :change_from_index, :memo_hash, :remaining_named_loop_values
 
-  def initialize(n = 7)
+  def initialize(n = 7, testing = false)
+    # the Boolean at the end tells this class that we are in 'testing' mode, so that the Outputter class will
+    # take care of counting and aggregating the derangements fed into it
     @n = n
-    @outputter = Outputter.new
+    @testing = testing
+    @outputter = Outputter.new(testing)
     @loop_lengths_collection = Hash.new([])
     # loop_lengths_collection will be a Hash with a key of 2, 3, ... n - 2 or n 
     @loop_lengths = []

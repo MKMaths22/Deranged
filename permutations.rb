@@ -1,11 +1,14 @@
 class FromPermutations
   
-  attr_reader :n
+  attr_reader :n, :testing, :outputter
   attr_accessor :current_permutation, :current_positions
   
-  def initialize(n = 7)
+  def initialize(n = 7, testing = false)
+    # the Boolean at the end tells this class that we are in 'testing' mode, so that the Outputter class will
+    # take care of counting and aggregating the derangements fed into it
     @n = n
-    @outputter = Outputter.new
+    @testing = testing
+    @outputter = Outputter.new(testing)
     @current_permutation = n.times.map { |num| num + 1 }
     @current_positions = n.times.map { |num| num + 1 }
     # first permutation is [1, 2, 3.... n]

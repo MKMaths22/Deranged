@@ -1,14 +1,15 @@
 class Outputter
   
   attr_accessor :output_line, :output_line_length, :output_file
-  attr_reader :output_per_line, :total_outputs
+  attr_reader :output_per_line, :total_outputs, :testing
   
-  def initialize(output_per_line = 5)
+  def initialize(testing = false, output_per_line = 5)
+    @testing = testing
     @output_per_line = output_per_line
     @output_line = ''
     @output_line_length = 0
     @output_file = File.exist?("output.txt") ? wipe_output : create_output_file
-    @total_outputs = 0
+    @total_outputs = 0 if testing
   end
 
   def wipe_output
@@ -40,7 +41,7 @@ class Outputter
     end
     @output_line = output_line.concat(array.to_s.concat(', '))
     increment_line_length
-    increment_total_outputs
+    increment_total_outputs if testing
   end
 
   def increment_line_length

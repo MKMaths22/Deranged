@@ -6,16 +6,17 @@ class Derangements
   
   MAX_TRIES = 5
   
-  attr_reader :max_input, :output, :calculator
+  attr_reader :max_input, :output, :calculator, :testing
   
-  def initialize(max_input = 11, number = nil, method = nil)
+  def initialize(max_input = 11, number = nil, method = nil, testing = false)
     puts "Welcome."
     @max_input = max_input
+    @testing = testing
     number = get_valid_number unless number
       if number
         method = get_method unless method
         @calculator = 
-          method == 'permutations' ? FromPermutations.new(number) : ConstructLoops.new(number)
+          method == 'permutations' ? FromPermutations.new(number, testing) : ConstructLoops.new(number, testing)
           @start_time = Time.now
           @calculator.calculate_derangements
         puts "Time taken = #{Time.now - @start_time} seconds."
