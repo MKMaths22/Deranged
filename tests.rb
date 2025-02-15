@@ -5,32 +5,17 @@ require 'minitest/autorun'
 # require './loopsnomemory.rb'
 
 class DerangementsTest < Minitest::Test
-  def setup
-    # @five_with_loops = Derangements.new(11, 5, 'loops', true)
-    # the Boolean at the end tells the Derangements class that we are in 'testing' mode, so that the Outputter class will
-    # take care of counting and aggregating the derangements fed into it
-  end
-
-  def test_number_of_outputs_for_loops
-    five_with_loops = Derangements.new(11, 5, 'loops', true)
-    # the Boolean at the end tells the Derangements class that we are in 'testing' mode, so that the Outputter class will
-    # take care of counting and aggregating the derangements fed into it
-    output_handler = five_with_loops.calculator.outputter
-    assert_equal(output_handler.total_outputs, 44, 'did not return correct number of derangements')
-  end
-
-  def test_number_of_outputs_for_permutations
-    five_with_perms = Derangements.new(11, 5, 'permutations', true)
-    # the Boolean at the end tells the Derangements class that we are in 'testing' mode, so that the Outputter class will
-    # take care of counting and aggregating the derangements fed into it
-    output_handler = five_with_perms.calculator.outputter
-    assert_equal(output_handler.total_outputs, 44, 'did not return correct number of derangements')
-  end
 
   def test_actual_derangements_for_loops
     five_with_loops = Derangements.new(11, 5, 'loops', true)
     output_handler = five_with_loops.calculator.outputter
-    assert_equal(output_handler.aggregated_output[43], [5, 4, 2, 3, 1], 'did not finish with correct derangement')
+    assert_equal(output_handler.aggregated_output, [[2, 1, 4, 5, 3], [2, 1, 5, 3, 4], [2, 3, 1, 5, 4], [2, 3, 4, 5, 1], [2, 3, 5, 1, 4], [2, 4, 1, 5, 3], [2, 4, 5, 1, 3], [2, 4, 5, 3, 1], [2, 5, 1, 3, 4], [2, 5, 4, 1, 3], [2, 5, 4, 3, 1], [3, 1, 2, 5, 4], [3, 1, 4, 5, 2], [3, 1, 5, 2, 4], [3, 4, 1, 5, 2], [3, 4, 2, 5, 1], [3, 4, 5, 1, 2], [3, 4, 5, 2, 1], [3, 5, 1, 2, 4], [3, 5, 2, 1, 4], [3, 5, 4, 1, 2], [3, 5, 4, 2, 1], [4, 1, 2, 5, 3], [4, 1, 5, 2, 3], [4, 1, 5, 3, 2], [4, 3, 1, 5, 2], [4, 3, 2, 5, 1], [4, 3, 5, 1, 2], [4, 3, 5, 2, 1], [4, 5, 1, 2, 3], [4, 5, 1, 3, 2], [4, 5, 2, 1, 3], [4, 5, 2, 3, 1], [5, 1, 2, 3, 4], [5, 1, 4, 2, 3], [5, 1, 4, 3, 2], [5, 3, 1, 2, 4], [5, 3, 2, 1, 4], [5, 3, 4, 1, 2], [5, 3, 4, 2, 1], [5, 4, 1, 2, 3], [5, 4, 1, 3, 2], [5, 4, 2, 1, 3], [5, 4, 2, 3, 1]], 'did not feed correct derangements to outputter')
+  end
+
+  def test_actual_derangements_for_permutations
+    five_with_loops = Derangements.new(11, 5, 'permutations', true)
+    output_handler = five_with_loops.calculator.outputter
+    assert_equal(output_handler.aggregated_output, [[2, 1, 4, 5, 3], [2, 1, 5, 3, 4], [2, 3, 1, 5, 4], [2, 3, 4, 5, 1], [2, 3, 5, 1, 4], [2, 4, 1, 5, 3], [2, 4, 5, 1, 3], [2, 4, 5, 3, 1], [2, 5, 1, 3, 4], [2, 5, 4, 1, 3], [2, 5, 4, 3, 1], [3, 1, 2, 5, 4], [3, 1, 4, 5, 2], [3, 1, 5, 2, 4], [3, 4, 1, 5, 2], [3, 4, 2, 5, 1], [3, 4, 5, 1, 2], [3, 4, 5, 2, 1], [3, 5, 1, 2, 4], [3, 5, 2, 1, 4], [3, 5, 4, 1, 2], [3, 5, 4, 2, 1], [4, 1, 2, 5, 3], [4, 1, 5, 2, 3], [4, 1, 5, 3, 2], [4, 3, 1, 5, 2], [4, 3, 2, 5, 1], [4, 3, 5, 1, 2], [4, 3, 5, 2, 1], [4, 5, 1, 2, 3], [4, 5, 1, 3, 2], [4, 5, 2, 1, 3], [4, 5, 2, 3, 1], [5, 1, 2, 3, 4], [5, 1, 4, 2, 3], [5, 1, 4, 3, 2], [5, 3, 1, 2, 4], [5, 3, 2, 1, 4], [5, 3, 4, 1, 2], [5, 3, 4, 2, 1], [5, 4, 1, 2, 3], [5, 4, 1, 3, 2], [5, 4, 2, 1, 3], [5, 4, 2, 3, 1]], 'did not feed correct derangements to outputter')
   end
 
 end
