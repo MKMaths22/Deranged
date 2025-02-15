@@ -1,3 +1,5 @@
+require_relative './deranged.rb'
+
 def loop_vector(current_loop_lengths, n)
     # the current_loop_vector tells us how to loop back to the beginning of each loop when
     # making a derangement from named_loops. Updating this ONCE when the loop_lengths change makes
@@ -23,8 +25,14 @@ end
 
 # puts generate_initial_derangement([3,4,2], 9)
 
-current_named_loops = [6,5,4,3,2,1]
-puts current_named_loops[4..-1]
-puts "/n"
-puts current_named_loops
+# current_named_loops = [6,5,4,3,2,1]
+# puts current_named_loops[4..-1]
+# puts "/n"
+# puts current_named_loops
+
+Derangements.new(11, 5, 'loops', false)
+output_file = File.open("output.txt", 'r')
+puts output_file
+output_file.readlines 
+puts string
 

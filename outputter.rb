@@ -1,7 +1,7 @@
 class Outputter
   
   attr_accessor :output_line, :output_line_length, :output_file
-  attr_reader :output_per_line, :total_outputs, :testing, :aggregated_output
+  attr_reader :output_per_line, :testing, :aggregated_output
   
   def initialize(testing = false, output_per_line = 5)
     @testing = testing
@@ -9,7 +9,6 @@ class Outputter
     @output_line = ''
     @output_line_length = 0
     @output_file = File.exist?("output.txt") ? wipe_output : create_output_file
-    @total_outputs = 0 if testing
     @aggregated_output = [] if testing
   end
 
@@ -50,13 +49,13 @@ class Outputter
   end
 
   def increment_total_outputs(array)
-    @total_outputs += 1
     @aggregated_output.push(array)
   end
 
   def finish_output
     put_stop_on_line
     output_current_line
+    @output_file.close
     sort_aggregated_output if testing
   end
 
