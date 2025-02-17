@@ -8,7 +8,7 @@ class Derangements
   
   attr_reader :max_input, :output, :calculator, :testing
   
-  def initialize(max_input = 11, number = nil, method = nil, testing = false)
+  def initialize(max_input = 11, number = nil, method = nil, testing = false, memory = true)
     puts "Welcome."
     @max_input = max_input
     @testing = testing
@@ -16,7 +16,7 @@ class Derangements
       if number
         method = get_method unless method
         @calculator = 
-          method == 'permutations' ? FromPermutations.new(number, testing) : ConstructLoops.new(number, testing)
+          method == 'permutations' ? FromPermutations.new(number, testing) : ConstructLoops.new(number, testing, memory)
           @start_time = Time.now
           @calculator.calculate_derangements
         puts "Time taken = #{Time.now - @start_time} seconds."
@@ -74,4 +74,4 @@ class Derangements
   end
 end 
 
-# Derangements.new
+Derangements.new

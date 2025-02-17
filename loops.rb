@@ -1,12 +1,12 @@
 class ConstructLoops
 
-  attr_reader :n, :parameter_limits, :loop_lengths_collection, :loop_lengths, :loop_vector, :outputter, :testing, :memory
-  attr_accessor :parameter_values, :named_loops, :derangement, :variables, :change_from_index, :memo_hash, :remaining_named_loop_values
+  attr_reader :n, :parameter_limits, :loop_lengths_collection, :loop_lengths, :loop_vector, :outputter, :testing
+  attr_accessor :parameter_values, :named_loops, :derangement, :variables, :change_from_index, :memo_hash, :remaining_named_loop_values, :memory
 
-  def initialize(n = 7, testing = false)
+  def initialize(n = 7, testing = false, memory = true)
     # the Boolean at the end tells this class that we are in 'testing' mode, so that the Outputter class will
     # take care of counting and aggregating the derangements fed into it
-    @memory = ask_if_memory
+    @memory = testing ? memory : ask_if_memory
     @n = n
     @testing = testing
     @outputter = Outputter.new(testing)
@@ -27,7 +27,9 @@ class ConstructLoops
   end
 
   def ask_if_memory
-    true
+    puts "Would you like Ruby to remember previous values to help it find derangements quicker?"
+    puts "Answer Y for Yes or anything else for No."
+    gets.downcase.strip.chars[0] == 'y' ? true : false
   end
 
   def calculate_derangements
@@ -125,7 +127,9 @@ class ConstructLoops
 
   def modify_named_loops(from = change_from_index)
     index = from
-    remaining_named_loop_values = memo_hash[index].clone if memory
+    if memory == true
+      @remaining_named_loop_values = memo_hash[index].clone
+    end
     temporary_remaining_values = remaining_named_loop_values.clone
     # puts "On Line 120, modify_named_loops has from = #{from} and remaining_named_loop_values = #{remaining_named_loop_values}."
     # puts "modify_named_loops is running and temporary_remaining_values = #{temporary_remaining_values}."

@@ -6,7 +6,8 @@ require 'minitest/autorun'
 class DerangementsTest < Minitest::Test
 
   def test_actual_derangements_for_loops
-    five_with_loops = Derangements.new(11, 5, 'loops', true)
+    five_with_loops = Derangements.new(11, 5, 'loops', true, true)
+    # the Boolean arguments are firstly for testing = true and then for memory = true, which applies the memoization of change_from_index, remaining_named_loop_values etc.
     output_handler = five_with_loops.calculator.outputter
     assert_equal(output_handler.aggregated_output, [[2, 1, 4, 5, 3], [2, 1, 5, 3, 4], [2, 3, 1, 5, 4], [2, 3, 4, 5, 1], [2, 3, 5, 1, 4], [2, 4, 1, 5, 3], [2, 4, 5, 1, 3], [2, 4, 5, 3, 1], [2, 5, 1, 3, 4], [2, 5, 4, 1, 3], [2, 5, 4, 3, 1], [3, 1, 2, 5, 4], [3, 1, 4, 5, 2], [3, 1, 5, 2, 4], [3, 4, 1, 5, 2], [3, 4, 2, 5, 1], [3, 4, 5, 1, 2], [3, 4, 5, 2, 1], [3, 5, 1, 2, 4], [3, 5, 2, 1, 4], [3, 5, 4, 1, 2], [3, 5, 4, 2, 1], [4, 1, 2, 5, 3], [4, 1, 5, 2, 3], [4, 1, 5, 3, 2], [4, 3, 1, 5, 2], [4, 3, 2, 5, 1], [4, 3, 5, 1, 2], [4, 3, 5, 2, 1], [4, 5, 1, 2, 3], [4, 5, 1, 3, 2], [4, 5, 2, 1, 3], [4, 5, 2, 3, 1], [5, 1, 2, 3, 4], [5, 1, 4, 2, 3], [5, 1, 4, 3, 2], [5, 3, 1, 2, 4], [5, 3, 2, 1, 4], [5, 3, 4, 1, 2], [5, 3, 4, 2, 1], [5, 4, 1, 2, 3], [5, 4, 1, 3, 2], [5, 4, 2, 1, 3], [5, 4, 2, 3, 1]], 'did not feed correct derangements to outputter')
   end
@@ -18,7 +19,7 @@ class DerangementsTest < Minitest::Test
   end
 
   def test_spot_derangements_for_larger_n
-    eight_with_loops = Derangements.new(11, 8, 'loops', true)
+    eight_with_loops = Derangements.new(11, 8, 'loops', true, true)
     output_handler = eight_with_loops.calculator.outputter
     assert_equal(output_handler.aggregated_output[99], [2, 1, 5, 8, 6, 4, 3, 7])
   end
