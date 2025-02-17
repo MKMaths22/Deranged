@@ -1,11 +1,12 @@
 class ConstructLoops
 
-  attr_reader :n, :parameter_limits, :loop_lengths_collection, :loop_lengths, :loop_vector, :outputter, :testing
+  attr_reader :n, :parameter_limits, :loop_lengths_collection, :loop_lengths, :loop_vector, :outputter, :testing, :memory
   attr_accessor :parameter_values, :named_loops, :derangement, :variables, :change_from_index, :memo_hash, :remaining_named_loop_values
 
   def initialize(n = 7, testing = false)
     # the Boolean at the end tells this class that we are in 'testing' mode, so that the Outputter class will
     # take care of counting and aggregating the derangements fed into it
+    @memory = ask_if_memory
     @n = n
     @testing = testing
     @outputter = Outputter.new(testing)
@@ -19,10 +20,14 @@ class ConstructLoops
     @loop_vector = []
     @named_loops = n.times.map { |num| num + 1 }
     @derangement = []
-    @change_from_index = variables[-1]
+    @change_from_index = memory ? variables[-1] : 0
     @remaining_named_loop_values = n.times.map { |num| num + 1 }
-    @memo_hash = Hash.new()
+    @memo_hash = Hash.new() if memory
     # current_parameter_limits starts as [1, n - 1, n - 2 .... 1]
+  end
+
+  def ask_if_memory
+    true
   end
 
   def calculate_derangements
@@ -65,9 +70,11 @@ class ConstructLoops
     reset_parameter_values
     reset_named_loops
     update_loop_vector
-    reset_change_from_index
-    reset_remaining_named_loop_values
-    set_memo_hash
+    if memory
+      reset_change_from_index 
+      reset_remaining_named_loop_values
+      set_memo_hash
+    end
     modify_derangement(0)
   end
 
@@ -106,17 +113,19 @@ class ConstructLoops
       else
         parameter_values[parameter_number] += 1
         # puts "change_from_index is #{change_from_index} before it is changed."
-        @change_from_index = parameter_number
+        @change_from_index = memory ? parameter_number : 0
         # puts "change_from_index has changed to #{change_from_index}."
-        remaining_named_loop_values = named_loops[parameter_number..-1].clone.sort
-        memo_hash[parameter_number] = remaining_named_loop_values.clone if cycle == 0
+        if memory 
+          remaining_named_loop_values = named_loops[change_from_index..-1].clone.sort
+          memo_hash[parameter_number] = remaining_named_loop_values.clone if cycle == 0
+        end
       end
     end
   end
 
   def modify_named_loops(from = change_from_index)
     index = from
-    remaining_named_loop_values = memo_hash[index].clone
+    remaining_named_loop_values = memo_hash[index].clone if memory
     temporary_remaining_values = remaining_named_loop_values.clone
     # puts "On Line 120, modify_named_loops has from = #{from} and remaining_named_loop_values = #{remaining_named_loop_values}."
     # puts "modify_named_loops is running and temporary_remaining_values = #{temporary_remaining_values}."

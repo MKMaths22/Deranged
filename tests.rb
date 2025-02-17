@@ -2,7 +2,6 @@ require './deranged'
 require './permutations'
 require './loops.rb'
 require 'minitest/autorun'
-# require './loopsnomemory.rb'
 
 class DerangementsTest < Minitest::Test
 
