@@ -32,21 +32,15 @@ class DerangementsTest < Minitest::Test
 
   def test_outputter_makes_correctly_formatted_output
     File.delete("output.txt") if File.exists?("output.txt")
-    output_handler = Outputter.new(false, 1)
-    output_handler.add_perm_to_output([0, 0, 0, 1])
-    output_handler.add_perm_to_output([0, 0, 0, 2])
-    output_handler.add_perm_to_output([0, 0, 0, 3])
-    output_handler.add_perm_to_output([0, 0, 0, 4])
-    output_handler.add_perm_to_output([0, 0, 0, 5])
-    output_handler.add_perm_to_output([0, 0, 0, 6])
-    output_handler.add_perm_to_output([0, 0, 0, 7])
-    output_handler.add_perm_to_output([0, 0, 0, 8])
-    output_handler.add_perm_to_output([0, 0, 0, 9])
-    output_handler.add_perm_to_output([0, 0, 0, 10])
-    output_handler.add_perm_to_output([0, 0, 0, 11])
+    output_handler = Outputter.new
+    outputs_array = [[2, 1, 4, 3], [2, 3, 4, 1], [2, 4, 1, 3], [3, 1, 4, 2], [3, 4, 1, 2], [3, 4, 2, 1], [4, 1, 2, 3], [4, 3, 1, 2], [4, 3, 2, 1]]
+    outputs_array.each do |array|
+        output_handler.add_perm_to_output(array)
+    end
     output_handler.finish_output
-    first_output_line = File.readlines("output.txt").first
-    assert_equal(first_output_line, '[0, 0, 0, 1],')
+    output_given = File.readlines("output.txt")
+    assert_equal(output_given[0].strip, "[2, 1, 4, 3], [2, 3, 4, 1], [2, 4, 1, 3], [3, 1, 4, 2], [3, 4, 1, 2],")
+    assert_equal(output_given[1].strip, "[3, 4, 2, 1], [4, 1, 2, 3], [4, 3, 1, 2], [4, 3, 2, 1].")
   end
 
 end
