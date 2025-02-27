@@ -74,4 +74,4 @@ class Derangements
   end
 end 
 
-Derangements.new
+# Derangements.new
