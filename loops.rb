@@ -20,7 +20,8 @@ class ConstructLoops
     @loop_vector = []
     @named_loops = n.times.map { |num| num + 1 }
     @derangement = []
-    @change_from_index = memory ? variables[-1] : 0
+    @change_from_index = @memory ? variables[-1] : 0
+    puts "change_from_index was initially set to the value #{change_from_index}."
     @remaining_named_loop_values = n.times.map { |num| num + 1 }
     @memo_hash = Hash.new() if memory
     # current_parameter_limits starts as [1, n - 1, n - 2 .... 1]
@@ -127,21 +128,32 @@ class ConstructLoops
 
   def modify_named_loops(from = change_from_index)
     index = from
-    if memory == true
+    puts "At start of modify_named_loops, the parameter_values are #{parameter_values} and variables are #{variables}. Change_from_index = #{@change_from_index}. Index = #{index}."
+    puts "On Line 130, remaining_named_loop_values = #{remaining_named_loop_values}"
+    if memory
       @remaining_named_loop_values = memo_hash[index].clone
     end
+    puts "On Line 133, remaining_named_loop_values = #{remaining_named_loop_values}"
     temporary_remaining_values = remaining_named_loop_values.clone
     # puts "On Line 120, modify_named_loops has from = #{from} and remaining_named_loop_values = #{remaining_named_loop_values}."
     # puts "modify_named_loops is running and temporary_remaining_values = #{temporary_remaining_values}."
     # the remaining values from the set (1...n), disregarding those values used before index = from in the current_named_loops
     # temp... and remaining... are sorted in increasing order, so we can take the correct values based on the parameter_values
     while index < n do
+      puts "index = #{index}"
       index_to_use = parameter_values[index] - 1
+      puts "index_to_use = #{index_to_use}"
       value_to_use = temporary_remaining_values[index_to_use]
+      puts "value_to_use = #{value_to_use}"
       named_loops[index] = value_to_use
+      puts "named_loops is now #{named_loops}"
+      puts "before deleting the value #{value_to_use}, temporary_remaining_values are #{temporary_remaining_values}."
       temporary_remaining_values.delete_at(index_to_use)
+      puts "After deleting the value, temporary_remaining_values are #{temporary_remaining_values}."
       index += 1
     end
+    puts "At the end of modify_named_loops, named_loops = #{named_loops}"
+    # sleep(1)
   end
 
   def modify_derangement(from = change_from_index)
@@ -224,7 +236,7 @@ class ConstructLoops
   #  @named_loops.each_with_index do |value, index|
   #    @derangement[value - 1] = @named_loops[@loop_vector[index]]
   #  end
-    # WE WANT TO GENERALISE THIS FOR CASES WHEN WE ARE JUST MODIFYING THE DERANGEMENT from a certain point in the named_loops onwards because of the @change_from_index 
+    # WE WANT TO GENERALISE THIS FOR CASES WHEN WE ARE JUST MODIFYING THE DERANGEMENT from a certain point in the named_loops onwards because of the @ 
   # end
   
   def output_derangement
