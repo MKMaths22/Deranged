@@ -1,7 +1,7 @@
 class FromPermutations
   
   attr_reader :n, :testing, :outputter
-  attr_accessor :current_permutation, :current_positions
+  attr_accessor :permutation, :positions
   
   def initialize(n = 7, testing = false)
     # the Boolean at the end tells this class that we are in 'testing' mode, so that the Outputter class will
@@ -9,24 +9,24 @@ class FromPermutations
     @n = n
     @testing = testing
     @outputter = Outputter.new(testing)
-    @current_permutation = n.times.map { |num| num + 1 }
-    @current_positions = n.times.map { |num| num + 1 }
+    @permutation = n.times.map { |num| num + 1 }
+    @positions = n.times.map { |num| num + 1 }
     # first permutation is [1, 2, 3.... n]
-    # the @current_positions are human-indexed from 1 to say 1 is in position 1, 2 is in position 2 etc..
+    # the @positions are human-indexed from 1 to say 1 is in position 1, 2 is in position 2 etc..
   end
 
   def calculate_derangements
-    while current_permutation do
-      @outputter.add_perm_to_output(current_permutation) if is_derangement?(current_permutation)
+    while permutation do
+      @outputter.add_perm_to_output(permutation) if is_derangement?(permutation)
       find_next_permutation
-      # if there is no next permutation, @current_permutation becomes nil, stopping the while loop
+      # if there is no next permutation, @permutation becomes nil, stopping the while loop
     end
     @outputter.finish_output
   end
 
   def find_next_permutation
     looking_for = 1
-      while looking_for < n && current_positions[looking_for - 1] + looking_for == (n + 1) do
+      while looking_for < n && positions[looking_for - 1] + looking_for == (n + 1) do
         looking_for += 1
       end
       # looking_for is the highest number k such that the permutation finishes with k - 1, k - 2, k - 3 .... 1. So if
@@ -34,24 +34,24 @@ class FromPermutations
       # The next permutation will be obtained by moving looking_for one place to the right and putting all lower values
       # at the start of the permutation in increasing order
       if looking_for == n
-        @current_permutation = nil
+        @permutation = nil
         return
       end
     (looking_for - 1).times do |num|
-      @current_permutation.pop
-      @current_positions[num] = num + 1
+      @permutation.pop
+      @positions[num] = num + 1
       # we remove the first looking_for - 1 values from the end and prepare current_positions for adding them at the start
     end
     putting_it_up_front = looking_for - 1
       while putting_it_up_front > 0 do
-        @current_permutation = @current_permutation.unshift(putting_it_up_front)
-        # now the current_permutation has the looking_for - 1 values added to the start in increasing order
+        @permutation = @permutation.unshift(putting_it_up_front)
+        # now the permutation has the looking_for - 1 values added to the start in increasing order
         putting_it_up_front -= 1
       end
       changing_positions = looking_for
       while changing_positions <= n do
-        @current_positions[changing_positions - 1] += looking_for - 1
-        # the current_positions from looking_for upwards all have to increase because we inserted looking_for - 1 values to their left
+        @positions[changing_positions - 1] += looking_for - 1
+        # the positions from looking_for upwards all have to increase because we inserted looking_for - 1 values to their left
         changing_positions += 1
       end
     shift_one_step(looking_for)
@@ -59,13 +59,13 @@ class FromPermutations
   end
 
   def shift_one_step(number)
-    next_number_along_in_permutation = current_permutation[current_positions[number - 1]]
+    next_number_along_in_permutation = permutation[positions[number - 1]]
     # next_number_along... is the adjacent value to the right of looking_for
-    @current_permutation[current_positions[number - 1] - 1] = next_number_along_in_permutation
-    @current_permutation[current_positions[number - 1]] = number
-    @current_positions[next_number_along_in_permutation - 1] = current_positions[next_number_along_in_permutation - 1] - 1
-    @current_positions[number - 1] = current_positions[number - 1] + 1
-    # the values looking_for and next_number_along have been interchanged, affecting current_permutation and current_positions accordingly.
+    @permutation[positions[number - 1] - 1] = next_number_along_in_permutation
+    @permutation[positions[number - 1]] = number
+    @positions[next_number_along_in_permutation - 1] = positions[next_number_along_in_permutation - 1] - 1
+    @positions[number - 1] = positions[number - 1] + 1
+    # the values looking_for and next_number_along have been interchanged, affecting permutation and positions accordingly.
   end
 
   def next_permutation_old_version(permutation)
