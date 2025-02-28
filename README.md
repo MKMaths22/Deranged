@@ -11,3 +11,17 @@ Instructions:
 [2, 4, 1, 3]... etc. for n = 4.
 
 4) It should be possible to easily tweak the program between two different ways of calculating the derangements, so that I can compare the speed of the methods.
+
+---------------------------------------------
+
+NOTES:
+
+The program now asks you whether you wish to calculate via permutations or by constructing derangements from loops. If the latter, the program also asks if you want memoization during the calculation. As well as outputting the derangements in output.txt (a file that is created or rewritten as required), it also outputs the time taken. Experimentation shows that loops are better than permutations for larger values of n. However the effect of memoization is sometimes negligable, a surprising result!
+
+
+There are now Minitest tests in tests.rb which can be run with the command 'ruby tests.rb' but it is recommended that you first comment out the 'Derangements.new' command at the end of derangements.rb. The tests can be run without doing this, but then the Derangements.new line will run when the tests run, causing you to be asked the questions for a number and method etc.. as another instance of the program runs alongside the tests. As of writing this, I am not sure how to better deal with this issue.
+
+--------------------------------------------
+
+The Mathematical Method and how to follow the code.
+
