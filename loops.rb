@@ -37,12 +37,9 @@ class ConstructLoops
 
   def calculate_derangements
     write_loop_lengths_collection
-    # puts "@loop_lengths_collection = #{loop_lengths_collection}."
     loop_lengths_collection[n].each do |array|
       update_loop_lengths(array)
-      # puts "At line 29, loop_lengths = #{loop_lengths}."
       set_parameter_limits_and_variables_etc_for_new_loop_lengths
-      # puts "For loop_lengths of #{loop_lengths}, the memo_hash starts off as #{memo_hash}."
       lexicographically_enumerate_parameter_values_to_generate_derangements(0)
     end
     @outputter.finish_output
@@ -53,6 +50,7 @@ class ConstructLoops
     counter = 3
       while counter <= n do
         find_loop_lengths(counter) unless counter == n - 1
+        # we don't need to know the loop_lengths for n - 1 case because this does not contribute to the n case.
         counter += 1
       end
   end
@@ -69,7 +67,6 @@ class ConstructLoops
   end
 
   def set_parameter_limits_and_variables_etc_for_new_loop_lengths
-    # puts "loop_lengths = #{loop_lengths}"
     update_parameter_limits
     update_variables
     reset_parameter_values
@@ -107,7 +104,6 @@ class ConstructLoops
     number_of_values_taken = parameter_limits[parameter_number]
     number_of_values_taken.times do |cycle|
       if variable_index + 1 == variables.size
-        # puts "At line 101, the loop_lengths are #{loop_lengths}. The variables are #{variables} and the parameters have values #{parameter_values}."
         modify_named_loops
         modify_derangement
         output_derangement 
@@ -117,9 +113,7 @@ class ConstructLoops
         parameter_values[parameter_number] = 1 
       else
         parameter_values[parameter_number] += 1
-        # puts "change_from_index is #{change_from_index} before it is changed."
         @change_from_index = memory ? parameter_number : 0
-        # puts "change_from_index has changed to #{change_from_index}."
         if memory 
           remaining_named_loop_values = named_loops[change_from_index..-1].clone.sort
           memo_hash[parameter_number] = remaining_named_loop_values.clone if cycle == 0
@@ -130,50 +124,33 @@ class ConstructLoops
 
   def modify_named_loops(from = change_from_index)
     index = from
-    # puts "At start of modify_named_loops, the parameter_values are #{parameter_values} and variables are #{variables}. Change_from_index = #{@change_from_index}. Index = #{index}."
-    # puts "On Line 130, remaining_named_loop_values = #{remaining_named_loop_values}"
     if memory
       @remaining_named_loop_values = memo_hash[index].clone
     end
-    # puts "On Line 133, remaining_named_loop_values = #{remaining_named_loop_values}"
     temporary_remaining_values = remaining_named_loop_values.clone
-    # puts "On Line 120, modify_named_loops has from = #{from} and remaining_named_loop_values = #{remaining_named_loop_values}."
-    # puts "modify_named_loops is running and temporary_remaining_values = #{temporary_remaining_values}."
     # the remaining values from the set (1...n), disregarding those values used before index = from in the current_named_loops
     # temp... and remaining... are sorted in increasing order, so we can take the correct values based on the parameter_values
     while index < n do
-      # puts "index = #{index}"
       index_to_use = parameter_values[index] - 1
-      # puts "index_to_use = #{index_to_use}"
       value_to_use = temporary_remaining_values[index_to_use]
-      # puts "value_to_use = #{value_to_use}"
       named_loops[index] = value_to_use
-      # puts "named_loops is now #{named_loops}"
-      # puts "before deleting the value #{value_to_use}, temporary_remaining_values are #{temporary_remaining_values}."
       temporary_remaining_values.delete_at(index_to_use)
-      # puts "After deleting the value, temporary_remaining_values are #{temporary_remaining_values}."
       index += 1
     end
-    # puts "At the end of modify_named_loops, named_loops = #{named_loops}"
-    # sleep(1)
   end
 
   def modify_derangement(from = change_from_index)
-    # puts "modify_derangement is running with from = #{from}. Named_loops = #{named_loops}. Loop vector is #{loop_vector} for loop lengths #{loop_lengths}. The derangement starts as #{derangement}."
     index = from.zero? ? 0 : from - 1
     while index < n do
       @derangement[named_loops[index] - 1] = named_loops[loop_vector[index]]
-      # puts "One change with index = #{index} has changed the derangement to #{derangement}."
       index += 1
     end
-    # puts "At the end of modify_derangement, the derangement is #{derangement}. The named_loops should not change and are #{named_loops}."
   end
 
   private
   
   def update_parameter_limits
     reset_parameter_limits
-    # puts "update_parameter_limits is running and they have reset. They now equal #{parameter_limits}."
     index_to_change = 0
     loop_lengths.each do |length|
       index_to_change += length
@@ -182,7 +159,6 @@ class ConstructLoops
   end
 
   def update_variables
-    # puts "The update_variables method is running, with parameter_limits = #{parameter_limits}."
     variables = []
     parameter_limits.each_with_index do | limit, parameter |
     @variables = variables.push(parameter) if limit >= 2
@@ -206,9 +182,7 @@ class ConstructLoops
   end
 
   def reset_parameter_limits
-    # puts "Before resetting, parameter_limits = #{parameter_limits}."
     @parameter_limits = ((n - 1).times.map { |num| (n - 1) - num }).unshift(1)
-    # puts "After resetting, the limits are #{parameter_limits}."
   end
 
   def reset_parameter_values
@@ -234,13 +208,6 @@ class ConstructLoops
     end
   end
 
-  # def generate_initial_derangement
-  #  @named_loops.each_with_index do |value, index|
-  #    @derangement[value - 1] = @named_loops[@loop_vector[index]]
-  #  end
-    # WE WANT TO GENERALISE THIS FOR CASES WHEN WE ARE JUST MODIFYING THE DERANGEMENT from a certain point in the named_loops onwards because of the @ 
-  # end
-  
   def output_derangement
     outputter.add_perm_to_output(derangement)
   end
