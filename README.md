@@ -42,3 +42,23 @@ We can convince ourselves inductively that every permutation is reached because 
 Constructing Derangements from Loops.  
 ---------------------------------------------
 
+I wanted to find a constructive system for expressing the derangements of [1, 2, .... n] in which we don't find all permutations first and then have to reject them if they have fixed points, as in the FromPermutations class.
+If we regard a derangement as a function from the set {1, 2, ... n} to itself, it is defined as a bijective function with no fixed points. So we can meaningfully ask --- what is the loop containing the number 1? It is defined to be the set of values taken by f^i(1) as i varies through the integers, and is guaranteed to contain 1 and at least 1 other value, so could be between 2 and all n elements in size. Essentially we keep applying the function f, starting at the value 1 and stopping when we return to 1.  
+
+If we disregard the values contained in that loop, which we can call the 'first loop', expressable in ORDER starting from 1 and finishing with f^(-1)(1), the remaining values, if there are any, will have a smallest member, which could be 2, or some other value (if 2 was in the first loop).
+By starting at the smallest remaining value, we can ask what are the values in its loop, by applying f repeatedly from that smallest remaining value. This is the 'second loop', and can be expressed in order starting from its smallest value. By continuing in this way, we can, in a UNIQUE way, express any derangement as a sequence of loops, each with size of at least 2 elements, and n = the total length of the loops.
+
+For example, with n = 9, consider the derangement [2, 5, 9, 1, 4, 8, 6, 7, 3].
+Starting from 1, f(1) = 2, f(2) = 5, f(5) = 4 and f(4) = 1, so the first loop is [1, 2, 5, 4]
+Smallest remaining value is 3, so f(3) = 9, f(9) = 3 and the second loop is [3, 9].
+Smallest remaining value is 6, so f(6) = 8, f(8) = 7 and f(7) = 6. The third loop is [6, 8, 7] and all nine values have been accounted for.  
+
+How does this allow us to neatly list the derangements on n = 9, covering each one exactly once?
+The above procedure, starting from any derangement is entirely FORCED.   
+
+So, in the program we start with #write_loop_lengths_collection which decomposes n as the sum of integers, each of which at least 2, in every possible way. For n = 9 we get @loop_lengths_collection[9] = [[9], [2, 7], [3, 6], [4, 5], [2, 2, 5], [5, 4], [2, 3, 4], [3, 2, 4], [6, 3], [2, 4, 3], [2, 2, 2, 3], [3, 3, 3], [4, 2, 3], [7, 2], [2, 5, 2], [2, 2, 3, 2], [2, 3, 2, 2], [3, 4, 2], [3, 2, 2, 2], [4, 3, 2], [5, 2, 2]].
+The program builds up to this from the base case:
+@loop_lengths_collection[2] = [[2]], then
+@loop_lengths_collection[3] = [[3]] --- we cannot decompose 3 into 2 numbers each at least 2, so we are done. This is why the while loop in #find_loop_lengths(num) only executes for counter <= num - 2, since num - 1 is too large, with only 1 left over we cannot make loops with one element.
+Fast forwarding to show a sufficiently interesting step, when we have done counter = 6 in #write_loop_lengths_collection
+

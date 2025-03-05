@@ -98,8 +98,7 @@ class ConstructLoops
   def lexicographically_enumerate_parameter_values_to_generate_derangements(variable_index)
   # variable index goes from 0 to current_variables.size - 1, telling us which variable we are dealing from.
   # As this method recursively calls other versions of itself, it causes the variables to reach all possible combinations,
-  # and therefore the parameters too (because the other parameters do not change anyway.)
-  #  puts "At line 93, variable index = #{variable_index}. Current variables are #{current_variables}."
+  # and therefore the parameters too (because the other parameters do not change anyway.
     parameter_number = variables[variable_index]
     number_of_values_taken = parameter_limits[parameter_number]
     number_of_values_taken.times do |cycle|
