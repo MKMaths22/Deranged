@@ -54,11 +54,29 @@ Smallest remaining value is 3, so f(3) = 9, f(9) = 3 and the second loop is [3, 
 Smallest remaining value is 6, so f(6) = 8, f(8) = 7 and f(7) = 6. The third loop is [6, 8, 7] and all nine values have been accounted for.  
 
 How does this allow us to neatly list the derangements on n = 9, covering each one exactly once?
-The above procedure, starting from any derangement is entirely FORCED.   
+The above procedure, starting from any derangement is entirely FORCED. Let's park this observation and return to the code.  
+
+The @loop_lengths_collection  
+------------------------------------
+
 
 So, in the program we start with #write_loop_lengths_collection which decomposes n as the sum of integers, each of which at least 2, in every possible way. For n = 9 we get @loop_lengths_collection[9] = [[9], [2, 7], [3, 6], [4, 5], [2, 2, 5], [5, 4], [2, 3, 4], [3, 2, 4], [6, 3], [2, 4, 3], [2, 2, 2, 3], [3, 3, 3], [4, 2, 3], [7, 2], [2, 5, 2], [2, 2, 3, 2], [2, 3, 2, 2], [3, 4, 2], [3, 2, 2, 2], [4, 3, 2], [5, 2, 2]].
 The program builds up to this from the base case:
 @loop_lengths_collection[2] = [[2]], then
 @loop_lengths_collection[3] = [[3]] --- we cannot decompose 3 into 2 numbers each at least 2, so we are done. This is why the while loop in #find_loop_lengths(num) only executes for counter <= num - 2, since num - 1 is too large, with only 1 left over we cannot make loops with one element.
-Fast forwarding to show a sufficiently interesting step, when we have done counter = 6 in #write_loop_lengths_collection
+Fast forwarding to show a sufficiently interesting step, when we have done counter = 6 in #write_loop_lengths_collection, we have
+@loop_lengths_collection[6] = [[6], [2, 4], [2, 2, 2], [3, 3], [4, 2]], and from earlier cases
+@loop_lengths_collection[5] = [[5], [2, 3], [3, 2]]
+@loop_lengths_collection[4] = [[4], [2, 2]].
+Counter then increments to 7 and we run #find_loop_lengths(num) with num = 7.
+At the start we declare @loop_lengths_collection[7] = [[7]] to deal with the case of a single loop of length 7.
+We set a new counter = 2 and for each member of @loop_lengths_collection[2] we push 7 - 2 = 5, to cover the cases that finish with a 5.
+There is only one possibility for this, namely [2, 5], so now @loop_lengths_collection[7] = [[7], [2, 5]].
+Counter increments to 3 and there is only one contribution in this case, so now @loop_lengths_collection[7] = [[7], [2, 5], [3, 4]].
+When counter = 4, there are 2 cases, so these have a 3 appended to them before they are appended to the @loop_lengths_collection[7], which is now [[7], [2, 5], [3, 4], [4, 3], [2, 2, 3]].
+Counter = 5 ( = 7 - 2) is the last case we need to consider because you cannot use 6, as there would only be 1 left over and loops must have at least 2 elements.
+At this last step, 3 possible arrays get added, and the final value of @loop_lengths_collection[7] is [[7], [2, 5], [3, 4], [4, 3], [2, 2, 3], [5, 2], [2, 3, 2], [3, 2, 2]].
+
+Note that all possibilities have been covered because the final loop must be either 2, 3, 4 or 5 elements, before which we must have a membet of @loop_lengths_collection[x] for x = 5, 4, 3 or 2, apart from the trivial case of [7] which we started with.
+
 
