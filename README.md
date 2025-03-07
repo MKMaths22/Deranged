@@ -77,6 +77,19 @@ When counter = 4, there are 2 cases, so these have a 3 appended to them before t
 Counter = 5 ( = 7 - 2) is the last case we need to consider because you cannot use 6, as there would only be 1 left over and loops must have at least 2 elements.
 At this last step, 3 possible arrays get added, and the final value of @loop_lengths_collection[7] is [[7], [2, 5], [3, 4], [4, 3], [2, 2, 3], [5, 2], [2, 3, 2], [3, 2, 2]].
 
-Note that all possibilities have been covered because the final loop must be either 2, 3, 4 or 5 elements, before which we must have a membet of @loop_lengths_collection[x] for x = 5, 4, 3 or 2, apart from the trivial case of [7] which we started with.
+Note that all possibilities have been covered because the final loop must be either 2, 3, 4 or 5 elements, before which we must have a member of @loop_lengths_collection[x] for x = 5, 4, 3 or 2, apart from the trivial case of [7] which we started with.
 
+Remember that earlier procedure that starts with a derangement and produces an ORDERED sequence of loop_lengths based on each loop starting with the LOWEST unused number so far? This allows us to START with a specific array of @loop_lengths, as in the #calculate_derangements method such as @loop_lengths = [4, 2, 3] when n = 9 and then CONSTRUCT all derangements of n = 9 for which the loop containing '1' has 4 elements and the loop containing the next smallest number has 2 elements and the other 3 elements form a loop. Included in these will be our example of [2, 5, 9, 1, 4, 8, 6, 7, 3].
+So we need to know what the @parameters and @variables are that generate the set of derangements for these particular @loop_lengths. The way I thought about this was:
+'How much freedom do we have to find such a derangement?'
+The first loop will have 4 elements. We have no choice for the 1st one, which must be '1' by definition of 'first loop'. The next one could be any of 8 possibilities 2, 3, 4 ... or 9. The third member of that loop has 7 remaining possibilities and the 4th has 6 possible choices.
+For the second loop, the first element is forced as it must be the lowest number not used in the first loop. But the 2nd and final member of that loop now has 4 possible options.
+In the 3rd loop, the first element is similarly forced. Then we have 2 choices for the next element and just 1 choice (so forced again) for the final element.
+
+@parameters are the variables representing the 'choices' we make including the forced ones. Of these the @variables include only the unforced choices.
+The @parameter_limits count how many choices we have for each element as we choose them above. For @loop_lengths = [4, 2, 3] the @parameter_limits are [1, 8, 7, 6, 1, 4, 1, 2, 1].
+Notice that this is just [9, 8, 7, 6, 5, 4, 3, 2, 1] but with the first elements of each loop forced, the initial 9, 5th value (value 4 in the code) 5 and 7th (value 6 in the code) get replaced by 1 to reflect this. This is how #update_parameter_limits works. #update_variables uses the @parameter_limits to observe which parameters are not forced. The @variables are given according to the computer-indexed parameters so in this case @variables = [1, 2, 3, 5, 7] because we have forced parameters in positions 0, 4, 6 and 8 (starts of the loops and the final forced choice).
+
+How do the values of the @parameters determine actual @named_loops and then a @derangement to be outputted?
+The @named_loops just concatenate the distinct loops of the derangement. For our example derangement [2, 5, 9, 1, 4, 8, 6, 7, 3], with @loop_lengths of [4, 2, 3] and loops of [1, 2, 5, 4], [3, 9] and [6, 8, 7], the @named_loops will need to equal [1, 2, 5, 4, 3, 9, 6, 8, 7]. This defines the derangement uniquely IN CONTEXT with the @loop_lengths because knowing the lengths lets us separate that @named_loops array in the right way to get the actual loops and then the derangement. With different loop lengths, the SAME @named_loops would represent a different derangement.
 

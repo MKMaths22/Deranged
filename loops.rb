@@ -26,7 +26,7 @@ class ConstructLoops
     @change_from_index = memory ? variables[-1] : 0
     @remaining_named_loop_values = n.times.map { |num| num + 1 }
     @memo_hash = Hash.new() if memory
-    # current_parameter_limits starts as [1, n - 1, n - 2 .... 1]
+    # parameter_limits starts as [1, n - 1, n - 2 .... 1]
   end
 
   def ask_if_memory
@@ -80,20 +80,20 @@ class ConstructLoops
     modify_derangement(0)
   end
 
-    # current_loop_lengths is for example [3, 4, 2] from which we will get all derangements of n = 9 in which the element '1' is in a loop of length 3 and the next lowest
+    # loop_lengths is for example [3, 4, 2] from which we will get all derangements of n = 9 in which the element '1' is in a loop of length 3 and the next lowest
     # element not yet chosen is in a loop of length 4 and the remaining elements make a loop of length 2.
     # the parameters are numbered in the computer-indexed way from 0 to n - 1, and correspondingly the variables, which are the parameters with limit at least 2
     # the VALUES of the parameters/variables are human-indexed, where 1 means lowest-available value etc.
 
 
-    # current_parameter_limits is the array telling us how many choices we have for each member of the loops. For example, for [3, 4, 2] we get [1, 8, 7, 1, 5, 4, 3, 1, 1]
+    # parameter_limits is the array telling us how many choices we have for each member of the loops. For example, for [3, 4, 2] we get [1, 8, 7, 1, 5, 4, 3, 1, 1]
     
     # Starts with parameter values of [1, 1, 1, .... 1] and generates the next option lexicographically until we reach the upper limit for each choice.
     # But if we keep updating the parameter_values lexico and then generate the named_loops from that (and then the derangement itself trivially) then lots of steps will be repeated.
     # Can we 'save our progress' so that we ONLY UPDATE the parts that have changed from changing the parameter values? Then the earlier part of the named loops can be kept and not
     # recreated in exactly the same way.
+    # This is what the memo_hash and change_from_index achieve when @memory = true, although this does not seem to make the program quicker.
 
-    # Make sure parameter_limits and parameter_values are RESET AT THE END of their current use
 
   def lexicographically_enumerate_parameter_values_to_generate_derangements(variable_index)
   # variable index goes from 0 to current_variables.size - 1, telling us which variable we are dealing from.
