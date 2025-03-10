@@ -88,7 +88,7 @@ class ConstructLoops
 
     # parameter_limits is the array telling us how many choices we have for each member of the loops. For example, for [3, 4, 2] we get [1, 8, 7, 1, 5, 4, 3, 1, 1]
     
-    # Starts with parameter values of [1, 1, 1, .... 1] and generates the next option lexicographically until we reach the upper limit for each choice.
+    # After reset_parameter_values they are [1, 1, 1, .... 1]. The #lexicographically_enumerate... below generates the next option lexicographically until we reach the upper limit for each choice.
     # But if we keep updating the parameter_values lexico and then generate the named_loops from that (and then the derangement itself trivially) then lots of steps will be repeated.
     # Can we 'save our progress' so that we ONLY UPDATE the parts that have changed from changing the parameter values? Then the earlier part of the named loops can be kept and not
     # recreated in exactly the same way.
