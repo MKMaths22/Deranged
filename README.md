@@ -60,22 +60,35 @@ The @loop_lengths_collection
 ------------------------------------
 
 
-So, in the program we start with #write_loop_lengths_collection which decomposes n as the sum of integers, each of which at least 2, in every possible way. For n = 9 we get @loop_lengths_collection[9] = [[9], [2, 7], [3, 6], [4, 5], [2, 2, 5], [5, 4], [2, 3, 4], [3, 2, 4], [6, 3], [2, 4, 3], [2, 2, 2, 3], [3, 3, 3], [4, 2, 3], [7, 2], [2, 5, 2], [2, 2, 3, 2], [2, 3, 2, 2], [3, 4, 2], [3, 2, 2, 2], [4, 3, 2], [5, 2, 2]].
-The program builds up to this from the base case:
-@loop_lengths_collection[2] = [[2]], then
+So, in the program we start with #write_loop_lengths_collection which decomposes n as the sum of integers, each of which at least 2, in every possible way. For n = 9 we get 
+
+    @loop_lengths_collection[9] = [[9], [2, 7], [3, 6], [4, 5], [2, 2, 5], [5, 4], [2, 3, 4], [3, 2, 4], [6, 3], [2, 4, 3], [2, 2, 2, 3], [3, 3, 3], [4, 2, 3], [7, 2], [2, 5, 2], [2, 2, 3, 2], [2, 3, 2, 2], [3, 4, 2], [3, 2, 2, 2], [4, 3, 2], [5, 2, 2]].
+
+
+The program builds up to this from the base case:  
+    @loop_lengths_collection[2] = [[2]] then,
 @loop_lengths_collection[3] = [[3]] --- we cannot decompose 3 into 2 numbers each at least 2, so we are done. This is why the while loop in #find_loop_lengths(num) only executes for counter <= num - 2, since num - 1 is too large, with only 1 left over we cannot make loops with one element.
 Fast forwarding to show a sufficiently interesting step, when we have done counter = 6 in #write_loop_lengths_collection, we have
-@loop_lengths_collection[6] = [[6], [2, 4], [2, 2, 2], [3, 3], [4, 2]], and from earlier cases
-@loop_lengths_collection[5] = [[5], [2, 3], [3, 2]]
-@loop_lengths_collection[4] = [[4], [2, 2]].
+
+
+    @loop_lengths_collection[6] = [[6], [2, 4], [2, 2, 2], [3, 3], [4, 2]], and from earlier cases
+    @loop_lengths_collection[5] = [[5], [2, 3], [3, 2]]
+    @loop_lengths_collection[4] = [[4], [2, 2]].
+
 Counter then increments to 7 and we run #find_loop_lengths(num) with num = 7.
 At the start we declare @loop_lengths_collection[7] = [[7]] to deal with the case of a single loop of length 7.
 We set a new counter = 2 and for each member of @loop_lengths_collection[2] we push 7 - 2 = 5, to cover the cases that finish with a 5.
 There is only one possibility for this, namely [2, 5], so now @loop_lengths_collection[7] = [[7], [2, 5]].
-Counter increments to 3 and there is only one contribution in this case, so now @loop_lengths_collection[7] = [[7], [2, 5], [3, 4]].
-When counter = 4, there are 2 cases, so these have a 3 appended to them before they are appended to the @loop_lengths_collection[7], which is now [[7], [2, 5], [3, 4], [4, 3], [2, 2, 3]].
-Counter = 5 ( = 7 - 2) is the last case we need to consider because you cannot use 6, as there would only be 1 left over and loops must have at least 2 elements.
-At this last step, 3 possible arrays get added, and the final value of @loop_lengths_collection[7] is [[7], [2, 5], [3, 4], [4, 3], [2, 2, 3], [5, 2], [2, 3, 2], [3, 2, 2]].
+Counter increments to 3 and there is only one contribution in this case, so now 
+
+    @loop_lengths_collection[7] = [[7], [2, 5], [3, 4]].  
+
+When counter = 4, there are 2 cases, so these have a 3 appended to them before they are appended to the @loop_lengths_collection[7], which is now [[7], [2, 5], [3, 4], [4, 3], [2, 2, 3]].  
+Counter = 5 ( = 7 - 2) is the last case we need to consider because you cannot use 6, as there would only be 1 left over and loops must have at least 2 elements.  
+At this last step, 3 possible arrays get added, and the final value of 
+
+
+    @loop_lengths_collection[7] is [[7], [2, 5], [3, 4], [4, 3], [2, 2, 3], [5, 2], [2, 3, 2], [3, 2, 2]].
 
 Note that all possibilities have been covered because the final loop must be either 2, 3, 4 or 5 elements, before which we must have a member of @loop_lengths_collection[x] for x = 5, 4, 3 or 2, apart from the trivial case of [7] which we started with.
 
@@ -88,8 +101,10 @@ In the 3rd loop, the first element is similarly forced. Then we have 2 choices f
 
 @parameters are the variables representing the 'choices' we make including the forced ones. Of these the @variables include only the unforced choices.
 The @parameter_limits count how many choices we have for each element as we choose them above. For @loop_lengths = [4, 2, 3] the @parameter_limits are [1, 8, 7, 6, 1, 4, 1, 2, 1].
-Notice that this is just [9, 8, 7, 6, 5, 4, 3, 2, 1] but with the first elements of each loop forced, the initial 9, 5th value (value 4 in the code) 5 and 7th (value 6 in the code) get replaced by 1 to reflect this. This is how #update_parameter_limits works. #update_variables uses the @parameter_limits to observe which parameters are not forced. The @variables are given according to the computer-indexed parameters so in this case @variables = [1, 2, 3, 5, 7] because we have forced parameters in positions 0, 4, 6 and 8 (starts of the loops and the final forced choice).
+Notice that this is just [9, 8, 7, 6, 5, 4, 3, 2, 1] but with the first elements of each loop forced, the initial 9, 5th value (value 4 in the code) 5 and 7th (value 6 in the code) get replaced by 1 to reflect this. This is how #update_parameter_limits works. #update_variables uses the @parameter_limits to observe which parameters are not forced. The @variables are given according to the computer-indexed parameters so in this case @variables = [1, 2, 3, 5, 7] because we have forced parameters in positions 0, 4, 6 and 8 (starts of the loops and the final forced choice).  
 
+Using Parameters to generate all Derangements for given @loop_lengths
+-------------------------
 How do the values of the @parameters determine actual @named_loops and then a @derangement to be outputted?
 The @named_loops just concatenate the distinct loops of the derangement. For our example derangement [2, 5, 9, 1, 4, 8, 6, 7, 3], with @loop_lengths of [4, 2, 3] and loops of [1, 2, 5, 4], [3, 9] and [6, 8, 7], the @named_loops will need to equal [1, 2, 5, 4, 3, 9, 6, 8, 7]. This defines the derangement uniquely IN CONTEXT with the @loop_lengths because knowing the lengths lets us separate that @named_loops array in the right way to get the actual loops and then the derangement. *With different loop lengths, the SAME @named_loops would represent a different derangement.*
 
@@ -112,17 +127,17 @@ Eventually we end up with @derangement = [2, 1, 4, 5, 3, 7, 6] which indeed has 
 Let's now see how #lexicographically_enumerate_parameter_values_to_generate_derangements(0) runs in this example *with memory off* --- I will shorten the method name to #lexico in what follows:
 
 lexico(0) STARTS with variable_index = 0 so
-   parameter_number = variables[0] = 1 and number_of_values_taken = parameter_limits[1] = 6. In English, the first variable parameter takes 6 possible values. So then 6.times do |cycle|
+   parameter_number = @variables[0] = 1 and number_of_values_taken = @parameter_limits[1] = 6. In English, the first variable parameter takes 6 possible values. So then 6.times do |cycle|
    cycle = 0: there are 3 variables, so this is not the last one.
 
    We now run lexico(1):
    lexico(1) STARTS with variable_index = 1 so
-     parameter_number = variables[1] = 3 and number_of_values_taken = parameter_limits[3] = 4 --- the second variable parameter takes 4 possible values. Now 4.times do |cycle| 
+     parameter_number = @variables[1] = 3 and number_of_values_taken = @parameter_limits[3] = 4 --- the second variable parameter takes 4 possible values. Now 4.times do |cycle| 
      cycle = 0: there are 3 variables, so this is not the last one.
 
      We now run lexico(2):
      lexico(2) STARTS with variable_index = 2 so
-       parameter_number = variables[2] = 4 and number_of_values_taken = parameter_limits[4] = 3 --- the third variable parameter takes 3 possible values. Now 3.times do |cycle|
+       parameter_number = @variables[2] = 4 and number_of_values_taken = @parameter_limits[4] = 3 --- the third variable parameter takes 3 possible values. Now 3.times do |cycle|
        cycle = 0: This is the last variable so we DO run #modify_named_loops to get [1, 2, 3, 4, 5, 6, 7]
        and #modify_derangement results in the @derangement [2, 1, 4, 5, 3, 7, 6] being sent to the Outputter.
        This is not the last cycle in lexico(2) so we increment @parameter_values[4] to equal 2.
