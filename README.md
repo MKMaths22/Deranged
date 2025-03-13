@@ -108,3 +108,42 @@ In #modify_derangement(0), index = 0. Then, its while loop uses
 to first set @derangement[named_loops[0] - 1] = named_loops[loop_vector[0]]. loop_vector[0] = 1 and named_loops[1] = 2 so the first number 1 is being sent to 2. Left hand side is @derangement[1 - 1] so the @derangement starts [2....]. Then index increments to 1 and we get 
 @derangement[named_loops[1] - 1] = named_loops[loop_vector[1]] so on the left we are determining @derangement[2 - 1], i.e. @derangement[1], the 'second' number in the derangement, where 2 gets mapped to. On the RHS named_loops[loop_vector[1]] = named_loops[0] = 1, so the loop vector is telling us to go back to 1 again and the @derangement now starts [2, 1, ....].
 Eventually we end up with @derangement = [2, 1, 4, 5, 3, 7, 6] which indeed has loops of [1, 2], [3, 4, 5] and [6, 7]. It's not easy to explain this process because of the human-counting and computer-counting of numbers at different stages, which was one of the things that made writing this code more challenging.
+
+Let's now see how #lexicographically_enumerate_parameter_values_to_generate_derangements(0) runs in this example *with memory off* --- I will shorten the method name to #lexico in what follows:
+
+lexico(0) STARTS with variable_index = 0 so
+   parameter_number = variables[0] = 1 and number_of_values_taken = parameter_limits[1] = 6. In English, the first variable parameter takes 6 possible values. So then 6.times do |cycle|
+   cycle = 0: there are 3 variables, so this is not the last one.
+
+   We now run lexico(1):
+   lexico(1) STARTS with variable_index = 1 so
+     parameter_number = variables[1] = 3 and number_of_values_taken = parameter_limits[3] = 4 --- the second variable parameter takes 4 possible values. Now 4.times do |cycle| 
+     cycle = 0: there are 3 variables, so this is not the last one.
+
+     We now run lexico(2):
+     lexico(2) STARTS with variable_index = 2 so
+       parameter_number = variables[2] = 4 and number_of_values_taken = parameter_limits[4] = 3 --- the third variable parameter takes 3 possible values. Now 3.times do |cycle|
+       cycle = 0: This is the last variable so we DO run #modify_named_loops to get [1, 2, 3, 4, 5, 6, 7]
+       and #modify_derangement results in the @derangement [2, 1, 4, 5, 3, 7, 6] being sent to the Outputter.
+       This is not the last cycle in lexico(2) so we increment @parameter_values[4] to equal 2.
+
+       Then cycle = 1: We run #modify_named_loops to get [1, 2, 3, 4, 6, 5, 7] and #modify_derangement results in the @derangement [2, 1, 4, 6, 7, 3, 5] being sent to the Outputter. Not the last cycle, so increment @parameter_values[4] to equal 3.
+
+       Now cycle = 2: We run #modify_named_loops to get [1, 2, 3, 4, 7, 5, 6] and #modify_derangement results in the @derangement [2, 1, 4, 7, 6, 5, 3] being sent to the Outputter. This IS the last cycle in lexico(2) so we reset @parameter_values[4] back to 1.
+   
+   Now back in lexico(1) in cycle = 0, not the last one so we increment @parameter_values[3] to equal 2 and the cycle = 0 finishes.
+
+   Now cycle = 1, variable 1 is not the last one so we run lexico(2):
+
+    lexico(2) STARTS with variable_index = 2.... and the same process as above happens again with the last variable taking all 3 possible values, outputting a derangement each time, but with the previous variable one higher. At the last of those 3 cycles, @parameter_values[4] is reset back to 1.
+
+  Now back in lexico(1) in cycle = 1, we are not in the last cycle so we increment @parameter_values[3] to equal 3....
+    
+    lexico(2) runs 3 times as above...
+
+    Eventually we reach the point where @parameter_values[3] resets, so we have obtained and outputted @derangement values for all combinations of @parameter_values[3] and @parameter_values[4] and those values have both reset, so
+
+lexico(0) now increments the first variable and so on....
+
+Essentially, the method #lexico(k) is telling us to let the k'th variable *and ALL subsequent variables* take all possible values, outputting derangements for each combination.
+      

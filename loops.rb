@@ -103,6 +103,7 @@ class ConstructLoops
     number_of_values_taken = parameter_limits[parameter_number]
     number_of_values_taken.times do |cycle|
       if variable_index + 1 == variables.size
+        # only evaluate the named_loops, derangement when the variable is the last one
         modify_named_loops
         modify_derangement
         output_derangement 
