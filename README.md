@@ -93,7 +93,9 @@ At this last step, 3 possible arrays get added, and the final value of
 Note that all possibilities have been covered because the final loop must be either 2, 3, 4 or 5 elements, before which we must have a member of @loop_lengths_collection[x] for x = 5, 4, 3 or 2, apart from the trivial case of [7] which we started with.
 
 Remember that earlier procedure that starts with a derangement and produces an ORDERED sequence of loop_lengths based on each loop starting with the LOWEST unused number so far? This allows us to START with a specific array of @loop_lengths, as in the #calculate_derangements method such as @loop_lengths = [4, 2, 3] when n = 9 and then CONSTRUCT all derangements of n = 9 for which the loop containing '1' has 4 elements and the loop containing the next smallest number has 2 elements and the other 3 elements form a loop. Included in these will be our example of [2, 5, 9, 1, 4, 8, 6, 7, 3].
-So we need to know what the @parameters and @variables are that generate the set of derangements for these particular @loop_lengths. The way I thought about this was:
+So we need to know what the @parameters and @variables are that generate the set of derangements for these particular @loop_lengths.  
+
+The way I thought about this was:
 'How much freedom do we have to find such a derangement?'
 The first loop will have 4 elements. We have no choice for the 1st one, which must be '1' by definition of 'first loop'. The next one could be any of 8 possibilities 2, 3, 4 ... or 9. The third member of that loop has 7 remaining possibilities and the 4th has 6 possible choices.
 For the second loop, the first element is forced as it must be the lowest number not used in the first loop. But the 2nd and final member of that loop now has 4 possible options.
@@ -161,4 +163,11 @@ lexico(0) STARTS with variable_index = 0 so
 lexico(0) now increments the first variable and so on....
 
 Essentially, the method #lexico(k) is telling us to let the k'th variable *and ALL subsequent variables* take all possible values, outputting derangements for each combination.
+
+Memoization using @memory = true
+----------------
+
+Memoization uses @change_from_index to tell us to only #modify_named_loops from a certain point onwards, and the @memo_hash retains the @remaining_named_loop_values so that we know which elements we have to choose from when keeping previous values from the current value of @named_loops, to make the next @named_loops.
+
+In the latter stages of the code for #lexicographically_enumerate_parameter_values_to_generate_derangements, the @change_from_index 
       

@@ -1,7 +1,7 @@
 class ConstructLoops
 
   attr_reader :n, :parameter_limits, :loop_lengths_collection, :loop_lengths, :loop_vector, :outputter, :testing
-  attr_accessor :parameter_values, :named_loops, :derangement, :variables, :change_from_index, :memo_hash, :remaining_named_loop_values, :memory
+  attr_accessor :parameter_values, :named_loops, :derangement, :variables, :change_from_index, :memo_hash, :remaining_named_loop_values, :memory, :add_puts
 
   def initialize(n = 7, testing = false, memory = true)
     # the Boolean at the end tells this class that we are in 'testing' mode, so that the Outputter class will
@@ -27,6 +27,7 @@ class ConstructLoops
     @remaining_named_loop_values = n.times.map { |num| num + 1 }
     @memo_hash = Hash.new() if memory
     # parameter_limits starts as [1, n - 1, n - 2 .... 1]
+    @add_puts = false
   end
 
   def ask_if_memory
@@ -39,6 +40,7 @@ class ConstructLoops
     write_loop_lengths_collection
     loop_lengths_collection[n].each do |array|
       update_loop_lengths(array)
+      @add_puts = array == [2, 3, 2] ? true : false
       set_parameter_limits_and_variables_etc_for_new_loop_lengths
       lexicographically_enumerate_parameter_values_to_generate_derangements(0)
     end
@@ -114,9 +116,12 @@ class ConstructLoops
       else
         parameter_values[parameter_number] += 1
         @change_from_index = memory ? parameter_number : 0
+        puts "change_from_index updated to #{change_from_index} with variable_index #{variable_index} and parameter_number = #{parameter_number}." if add_puts
         if memory 
           remaining_named_loop_values = named_loops[change_from_index..-1].clone.sort
+          puts "remaining named loop values updated to #{remaining_named_loop_values}" if add_puts
           memo_hash[parameter_number] = remaining_named_loop_values.clone if cycle == 0
+          puts "Memo_hash updated so that for key #{parameter_number} we have value #{remaining_named_loop_values} because cycle = #{cycle}." if add_puts
         end
       end
     end
@@ -126,6 +131,7 @@ class ConstructLoops
     index = from
     if memory
       @remaining_named_loop_values = memo_hash[index].clone
+      puts "In #modify_named_loops, remaining_named_loop_values updated to be #{remaining_named_loop_values}" if add_puts
     end
     temporary_remaining_values = remaining_named_loop_values.clone
     # the remaining values from the set (1...n), disregarding those values used before index = from in the current_named_loops
@@ -140,9 +146,11 @@ class ConstructLoops
   end
 
   def modify_derangement(from = change_from_index)
+    puts "At start of #modify_derangement, @derangement = #{derangement} and from = change_from_index = #{from}." if add_puts
     index = from.zero? ? 0 : from - 1
     while index < n do
       @derangement[named_loops[index] - 1] = named_loops[loop_vector[index]]
+      puts "During the while loop, the derangement has changed to #{derangement}" if add_puts
       index += 1
     end
   end
