@@ -169,5 +169,12 @@ Memoization using @memory = true
 
 Memoization uses @change_from_index to tell us to only #modify_named_loops from a certain point onwards, and the @memo_hash retains the @remaining_named_loop_values so that we know which elements we have to choose from when keeping previous values from the current value of @named_loops, to make the next @named_loops.
 
-In the latter stages of the code for #lexicographically_enumerate_parameter_values_to_generate_derangements, the @change_from_index 
+In the latter stages of the code for #lexicographically_enumerate_parameter_values_to_generate_derangements, the @change_from_index is updated to equal the parameter_number of the parameter that has just been incremented. Essentially from that point onwards in the @named_loops, we need to update the remaining named loop values, which will happen when the recursive #lexico(k) is next running the modify_named_loops method (which happens when k + 1 is the number of variables.)  Recall that we only create the next values of @named_loops and @derangement when this #lexico(k) is running due to the "if variable_index + 1 == variables.size" condition in #lexico.
+
+Also, when @change_from_index is changed, the @memo_hash has a set of remaining_named_loop_values set as the value for the key of that parameter_number. When the #lexico(k) runs after a variable with parameter p has JUST been incremented then the later parameters have just been reset to 1, these are the circumstances in which we don't change @change_from_index to those LATER variables so it remains at p, allowing us to access the @memo_hash in the #modify_named_loops method.
+
+How This Works In the Example n = 7 with @named_loops = [2, 3, 2]
+-------------------------  
+
+
       
