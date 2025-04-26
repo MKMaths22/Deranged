@@ -173,8 +173,55 @@ In the latter stages of the code for #lexicographically_enumerate_parameter_valu
 
 Also, when @change_from_index is changed, the @memo_hash has a set of remaining_named_loop_values set as the value for the key of that parameter_number. When the #lexico(k) runs after a variable with parameter p has JUST been incremented then the later parameters have just been reset to 1, these are the circumstances in which we don't change @change_from_index to those LATER variables so it remains at p, allowing us to access the @memo_hash in the #modify_named_loops method.
 
-How This Works In the Example n = 7 with @named_loops = [2, 3, 2]
+How This Works In the Example n = 7 with @loop_lengths = [2, 3, 2]
 -------------------------  
+
+Recall that with @loop_lengths = [2, 3, 2] the @variables are [1, 3, 4] with @parameter_limits = [1, 6, 1, 4, 3, 1, 1]. 
+
+At the stage where @named_loops = [1, 2, 3, 6, 4, 5, 7]
+and the @derangement is therefore [2, 1, 6, 3, 7, 4, 5] which resulted from the @parameters having values of [(1), 1, (1), 3, 1, (1), (1)] where those in brackets are the non-variable parameters.
+
+We are currently running lexico(3) with parameter_number = 4 and number_of_values_taken = 3, cycle = 0 (the first cycle). In the second 'if else end' loop of lexico, cycle + 1 = 1, not 3, so we increment the parameter_values[4] to equal 2, so
+@parameters = [(1), 1, (1), 3, 2, (1), (1)]
+Then @change_from_index is set to equal 4, the parameter number we just incremented.
+
+Then in the "if memory" block, with cycle == 0, we update memo_hash[4] = [4, 5, 7], which are in increasing order, the values we can rearrange when we just change the @named_loops in such a way that the initial [1, 2, 3, 6] stays the same. So 4, 5, 7 are the values we can use when @change_from_index = 4 in #modify_named_loops, which is the method which retrieves the remembered values from the memo_hash.
+
+We now enter the second cycle, with cycle = 1 in lexico(3). So #modify_named_loops runs with from = change_from_index = 4. Index is set to be 4 and @remaining_named_loop_values retrieves the memo_hash[4] so is set to equal [4, 5, 7]. For the process of changing the named loops, we now set temporary_remaining_values to be a copy of this, i.e. [4, 5, 7]. @named_loops = [1, 2, 3, 6, 4, 5, 7] initially. Our aim is to just change what NEEDS to change. When the parameter_values[4] was incremented to 2, that only affects the @named_loops by rearranging those last three values.
+
+Sure enough, in the while loop of #modify_named_loops, we set index_to_use = parameter_values[4] - 1 = 1. The subtraction of 1 is needed because at the next stage value_to_use is set to be the 2nd of the [4, 5, 7] temporary_remaining_values but that array is computer-indexed so value_to_use = [4, 5, 7][1] = 5. We set named_loops[4] = 5 and delete 5 from the temporary_remaining_values, incrementing the index to 5 which is still less than n = 7, so we run the while loop again.
+
+Now we have @named_loops = [1, 2, 3, 6, 5, 5, 7] and temporary_remaining_values = [4, 7]. Index = 5 so index_to_use = parameter_values[5] - 1 =  1 - 1 = 0 so we are using the 1st value (with index 0) in the temporary_remaining_values = [4, 7] so we set named_loops[5] = 4, making @named_loops = [1, 2, 3, 6, 5, 4, 7] remove 4 and increment index to 6.
+
+Running the while loop one more time, index_to_use = 1 - 1 = 0 again. We take value_to_use = temporary_remaining_values[0], which is the only value anyway, i.e. 7, temporary_remaining_values becomes [] and when index is incremented to 7 the index < n condition fails so #modify_named_loops stops running with @named_loops = [1, 2, 3, 6, 5, 4, 7].
+
+Next in lexico(3) we run #modify_derangement and from = change_from_index = 4. Recall that @derangement = [2, 1, 6, 3, 7, 4, 5]. We have just updated @named_loops from [1, 2, 3, 6, 4, 5, 7] to [1, 2, 3, 6, 5, 4, 7]. The first change needed to the @derangement is that the 2nd loop is [3, 6, 5] instead of [3, 6, 4]. Index is set to be 4 - 1 = 3 because the value 6 in index = 3 position must now be mapped to 5 instead of 4. Recall that for @loop_lengths = [2, 3, 2], @loop_vector = [1, 0, 3, 4, 2, 6, 5]
+
+@derangement[named_loops[index] - 1] = named_loops[loop_vector[index]] tells us to change
+
+@derangement[named_loops[3] - 1], i.e. @derangement[6 - 1] i.e. the 4 to named_loops[loop_vector[3]] = named_loops[4] = 5. So @derangement is now [2, 1, 6, 3, 7, 5, 5]. Index increments to 4 and the while loop runs again.
+
+Now we change @derangement[named_loops[4] - 1], i.e. @derangement[5 - 1], the human-5th value of 7 to named_loops[loop_vector[4]] = named_loops[2] = 3. @derangement is now [2, 1, 6, 3, 3, 5, 5]. Index increments to 5 and the while loop runs again.
+
+Then we change @derangement[named_loops[5] - 1], i.e. @derangement[4 - 1], the human-4th value of 3, to named_loops[loop_vector[5]] = named_loops[6] = 7. @derangement is now [2, 1, 6, 7, 3, 5, 5]. Index increments to 6 and the while loop runs for the last time.
+
+We now change @derangement[named_loops[6] - 1], i.e. @derangement[7 - 1], the human-7th value of 5 to named_loops[loop_vector[6]] = named_loops[5] = 4. So at the end of #modify_derangement, @derangement = [2, 1, 6, 7, 3, 5, 4]. #output_derangement makes this the next one added to the output.
+
+In lexico(3), the parameter_values[4] gets incremented to 2 and @change_from_index set to be 4 again.
+We then enter the next loop in lexico(3) with cycle = 2, which is the final cycle. #modify_named_loops runs again, changing @named_loops to [1, 2, 3, 6, 7, 4, 5] and then #modify_derangement changes @derangement to [2, 1, 6, 5, 4, 7, 3]. Because cycle = 2, parameter_values[4] now resets to equal 1 instead of incrementing. This instance of lexico(3) now stops running and we revert back to the instance of lexico(2) within which we just finished running lexico(3). 
+
+That 2nd variable (corresponding to parameter index 3, the human-4th), has value 3. Recall that @parameter_values = [(1), 1, (1), 3, 1, (1), (1)] but now, in lexico(2) that 3 gets incremented to 4 and @change_from_index updated to equal 3, so
+@parameter_values = [(1), 1, (1), 4, 1, (1), (1)]
+
+Because we have changed the variable with parameter 3,
+the @remaining_named_loop_values now update to [4, 5, 6, 7]. Later in the 'if memory' block, we don't update the memo_hash value because cycle = 2 (the human-3rd of 4). When cycle was 0 in lexico(2), the memo_hash[3] was set to equal [4, 5, 6, 7].
+
+The next and final cycle = 3 now begins of lexico(2). This is not the last variable so lexico(3) runs again. Within lexico(3), we #modify_named_loops and #modify_derangement WITH change_from_index = 3. This captures the fact that the EARLIER variable, that 2nd one, has incremented to 4 so we have to start changing the @named_loops from [1, 2, 3, 6, 7, 4, 5], changing that human-4th place onwards.
+
+After #modify_named_loops, @named_loops = [1, 2, 3, 7, 4, 5, 6] and then after #modify_derangement we will have @derangement = [2, 1, 7, 3, 6, 5, 4]. This is cycle = 0 in lexico(3) so after @change_from_index updates to 4, the 'if memory' block DOES change memo_hash[4] = [4, 5, 6] which is really important because the last time we were running lexico(3) the last three values in @named_loops were different but now we have incremented the previous variable in lexico(2), the environment within which we are incrementing the final variable (the parameter with human-index 5, the computer-4th) has changed. So this is how the memo_hash keeps track of the values we have available when using #modify_named_loops to change the @named_loops from the required point onwards.
+
+-------------------------  
+
 
 
       

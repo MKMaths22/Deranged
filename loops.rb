@@ -131,7 +131,7 @@ class ConstructLoops
     index = from
     if memory
       @remaining_named_loop_values = memo_hash[index].clone
-      puts "In #modify_named_loops, remaining_named_loop_values updated to be #{remaining_named_loop_values}" if add_puts
+      puts "In #modify_named_loops, the current @named_loops are #{named_loops}. Remaining_named_loop_values updated to be #{remaining_named_loop_values}." if add_puts
     end
     temporary_remaining_values = remaining_named_loop_values.clone
     # the remaining values from the set (1...n), disregarding those values used before index = from in the current_named_loops
